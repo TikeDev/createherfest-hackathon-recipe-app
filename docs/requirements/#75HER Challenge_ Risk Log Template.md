@@ -1,0 +1,94 @@
+# **\#75HER Challenge: Risk Log Template**
+
+**Project Name:** \[Insert Project Name\]
+
+**Team Name:** \[Insert Team Name\]
+
+---
+
+## **💡 Purpose & Instructions**
+
+**Purpose:** Track issues you identified and fixed during development. This demonstrates proactive problem-solving and critical thinking to judges.
+
+**Instructions:** Document risks as you find them during the hackathon.
+
+* Categorize each by severity (Critical, Major, or Minor).  
+* Clearly show how you resolved them with evidence.  
+* **Target:** Document at least **3 risks** you found and fixed.
+
+---
+
+## **🔴 Severity Levels**
+
+* **Critical (Red):** Blocks submission. Includes exposed API keys, fabricated claims, IP violations, or a broken demo.  
+* **Major (Orange):** Must fix before final submission. Includes missing citations, accessibility violations, or broken links.  
+* **Minor (Yellow):** Document and fix if time permits. Includes minor typos or UI polish.
+
+---
+
+## **🛡️ Risk Log Table**
+
+| Area | Issue Description | Severity | Fix Applied | Evidence/Link | Status |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| \[e.g., Privacy\] | \[e.g., API key visible in code\] | 🔴 Critical | \[e.g., Removed key; added .env.example\] | \[e.g., .env.example\] | ✅ Fixed |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+
+---
+
+## **🚩 Risk Categories to Monitor**
+
+1. **Accuracy & Verifiability:** Are claims backed by credible sources?  
+2. **Privacy & Security:** No exposed API keys or PII (Personally Identifiable Information).  
+3. **Ethics & DEI:** Use of inclusive language and representative examples.  
+4. **Legal/IP & Licensing:** Proper licenses for libraries and attribution for assets.  
+5. **Accessibility:** Alt text on images and WCAG AA color contrast (4.5:1).  
+6. **Operational:** The demo runs from a fresh clone and all links work.
+
+---
+
+## **✅ Self-Red-Team Checklist**
+
+*Run this check 48 hours before submission\!*
+
+### **Privacy & Security**
+
+* \[ \] No API keys, passwords, or tokens in code.  
+* \[ \] .env.example file included with dummy values.  
+* \[ \] No real user data (emails/names) in screenshots or demos.
+
+### **Accuracy & Sources**
+
+* \[ \] All statistics have source citations in the Evidence Log.  
+* \[ \] Data visualizations show real or clearly labeled synthetic data.
+
+### **Legal & IP**
+
+* \[ \] LICENSE file present and all dependencies listed.  
+* \[ \] No unauthorized logos or trademarks used.
+
+### **Accessibility**
+
+* \[ \] All images have meaningful alt text.  
+* \[ \] Color contrast meets WCAG AA standards.  
+* \[ \] Keyboard navigation works for interactive elements.
+
+### **Operational**
+
+* \[ \] Project runs from a fresh clone.  
+* \[ \] All links in the README and documentation work.
+
+---
+
+## **🏆 Tips for a Strong Risk Log**
+
+* **Be Honest:** Judges respect transparency regarding the issues you caught.  
+* **Provide Evidence:** Document fixes with specific file names or line numbers.  
+* **Update Regularly:** Check this list weekly during development (Days 51-70).  
+* **Don't Claim Zero Risks:** It is not credible to have found no risks during a project.
+
+---
+
+Part of the \#75HER Challenge | CreateHER Fest 2026 
+
