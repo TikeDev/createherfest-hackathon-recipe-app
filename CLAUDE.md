@@ -44,7 +44,7 @@ Ranked recommendations with "Why this fits you" reasons
 Recipe detail → Playbook View → step-by-step cooking mode
 ```
 
-See [docs/PlanOverviewDiagram.md](docs/PlanOverviewDiagram.md) for Mermaid flow diagrams.
+See [docs/plans/Plan_Overview_Diagram.md](docs/plans/Plan_Overview_Diagram.md) for Mermaid flow diagrams.
 
 ### Key Data Models
 
@@ -99,6 +99,6 @@ These must never be violated:
 
 | File | Description | When to consult |
 |------|-------------|-----------------|
-| [docs/InitialMVPPlan.md](docs/InitialMVPPlan.md) | Full MVP spec, data types, two-week plan, 16 acceptance criteria | Adding features or writing code |
-| [docs/PLAN-RECIPE_EXTRACTION_AGENT.md](docs/PLAN-RECIPE_EXTRACTION_AGENT.md) | Agent pipeline, tools, output format, offline queue | Building or modifying the AI extraction flow |
-| [docs/PlanOverviewDiagram.md](docs/PlanOverviewDiagram.md) | Mermaid architecture diagrams | Understanding system flow at a glance |
+| [docs/plans/Initial_MVP_Plan.md](docs/plans/Initial_MVP_Plan.md) | Full MVP spec, data types, two-week plan, 16 acceptance criteria | Adding features or writing code |
+| [docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md](docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md) | Agent pipeline, tools, output format, offline queue | Building or modifying the AI extraction flow |
+| [docs/plans/Plan_Overview_Diagram.md](docs/plans/Plan_Overview_Diagram.md) | Mermaid architecture diagrams | Understanding system flow at a glance |
