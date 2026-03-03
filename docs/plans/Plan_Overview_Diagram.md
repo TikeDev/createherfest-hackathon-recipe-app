@@ -1,4 +1,4 @@
-# Recipe Streamliner Plan Overview
+# Simmer Plan Overview
 
 ## 1) User Inputs and Modes
 ```mermaid

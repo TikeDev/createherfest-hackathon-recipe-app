@@ -1,6 +1,6 @@
 # 🔍 Perplexity Enterprise Guide
 
-A practical guide for the Recipe Streamliner team on how to use Perplexity Enterprise effectively during the hackathon.
+A practical guide for the Simmer team on how to use Perplexity Enterprise effectively during the hackathon.
 
 ## Table of Contents
 
@@ -47,7 +47,7 @@ Perplexity Enterprise is an AI-powered search and research tool that answers que
 
 ### Research & Domain Knowledge
 
-🧠 This is Perplexity's strongest value for Recipe Streamliner. Use it to inform design and product decisions.
+🧠 This is Perplexity's strongest value for Simmer. Use it to inform design and product decisions.
 
 **♿ Accessibility & user research**
 - What physical and cognitive limitations most affect people's ability to cook?

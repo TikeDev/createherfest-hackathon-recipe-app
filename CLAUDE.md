@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Recipe Streamliner** — A React PWA built for the CreateHerFest Hackathon (deadline: March 7, 2026) that helps users with temporary, chronic, or permanent physical/cognitive limitations find and follow accessible recipes.
+**Simmer** — A React PWA built for the CreateHerFest Hackathon (deadline: March 7, 2026) that helps users with temporary, chronic, or permanent physical/cognitive limitations find and follow accessible recipes.
 
 **Status:** Implementation phase — scaffold complete, building extraction agent.
 

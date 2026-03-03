@@ -1,4 +1,4 @@
-# #75HER Project: Recipe Streamliner
+# #75HER Project: Simmer
 
 **One-line Value Proposition:** People with disabilities get personalized, safe recipe recommendations in seconds with zero setup.
 
@@ -25,7 +25,7 @@
 
 ## ✨ Solution Overview
 
-**What we built:** Recipe Streamliner is a React PWA that combines a persistent accessibility profile with optional session-level input (how you're feeling *right now*) to surface recipes that are genuinely safe and doable for the user at that moment. An AI extraction agent processes recipe URLs or pasted text into a structured, offline-capable format. Recommended recipes open in a Playbook View — a simplified, step-checkable cooking mode designed for low cognitive load.
+**What we built:** Simmer is a React PWA that combines a persistent accessibility profile with optional session-level input (how you're feeling *right now*) to surface recipes that are genuinely safe and doable for the user at that moment. An AI extraction agent processes recipe URLs or pasted text into a structured, offline-capable format. Recommended recipes open in a Playbook View — a simplified, step-checkable cooking mode designed for low cognitive load.
 
 **Key Features:**
 
@@ -46,7 +46,7 @@
 **Requirements:** Node 18+, pnpm, OpenAI API key.
 
 ```bash
-git clone https://github.com/[your-repo] recipe-streamliner && cd recipe-streamliner && cp .env.example .env && pnpm install && pnpm dev
+git clone https://github.com/[your-repo] simmer && cd simmer && cp .env.example .env && pnpm install && pnpm dev
 ```
 
 Add your `VITE_OPENAI_API_KEY` to `.env`, then open **http://localhost:5173** in your browser.

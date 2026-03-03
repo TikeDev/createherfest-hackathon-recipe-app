@@ -15,7 +15,7 @@ interface RecipeDB extends DBSchema {
   }
 }
 
-const DB_NAME = 'recipe-streamliner'
+const DB_NAME = 'simmer'
 const DB_VERSION = 1
 
 let dbPromise: Promise<IDBPDatabase<RecipeDB>> | null = null
