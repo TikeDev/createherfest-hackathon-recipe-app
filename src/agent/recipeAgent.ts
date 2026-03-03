@@ -97,7 +97,7 @@ export async function runRecipeAgent(options: RunAgentOptions): Promise<RecipeJS
     onProgress?.(`Calling model (iteration ${iterations})...`)
 
     const response = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-5-nano',
       temperature: 0.3,
       messages,
       tools: openAITools,

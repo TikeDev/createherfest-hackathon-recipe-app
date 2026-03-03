@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Bundler:** Vite 6
 - **Styling:** Tailwind CSS 3
 - **Storage:** IndexedDB via `idb`
-- **AI:** OpenAI `gpt-4o-mini` (temp 0.3) with function calling for recipe extraction
+- **AI:** OpenAI `gpt-5-nano` (temp 0.3) with function calling for recipe extraction
 - **Validation:** Zod
 - **Package manager:** pnpm
 
