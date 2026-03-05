@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getRecipe } from '../storage/recipes'
-import type { RecipeJSON, Step, Ingredient } from '../types/recipe'
+import type { RecipeJSON, Step, Ingredient, GroceryCategory } from '../types/recipe'
+import { classifyGroceries } from '../agent/classifyGroceries'
 
 
 // ─── Brand tokens ────────────────────────────────────────────────
@@ -142,51 +143,110 @@ const StepLayout = ({
 )
 
 // ─── Groceries ───────────────────────────────────────────────────
+const CATEGORY_ICONS: Record<GroceryCategory, string> = {
+    'Produce': '🥦',
+    'Protein': '🥩',
+    'Dairy': '🧀',
+    'Pantry': '🫙',
+    'Spices & Seasonings': '🌿',
+    'Oils & Vinegars': '🫒',
+    'Canned & Jarred': '🥫',
+    'Frozen': '❄️',
+    'Bakery': '🍞',
+    'Beverages': '🥤',
+    'Other': '📦',
+}
+
 function GroceriesStage({ recipe, onNext, onBack }: { recipe: RecipeJSON; onNext: () => void; onBack: () => void }) {
     const [checked, setChecked] = useState<Record<string, boolean>>({})
+    const [categories, setCategories] = useState<Record<string, GroceryCategory> | null>(null)
+    const [classifying, setClassifying] = useState(true)
+
+    useEffect(() => {
+        classifyGroceries(recipe.ingredients)
+            .then(setCategories)
+            .catch(() => setCategories({}))
+            .finally(() => setClassifying(false))
+    }, [recipe.ingredients])
 
     const toggle = (id: string) => setChecked(c => ({ ...c, [id]: !c[id] }))
     const total = recipe.ingredients.length
     const checkedCount = Object.values(checked).filter(Boolean).length
+
+    // Group ingredients by category once classification is ready
+    const grouped = new Map<GroceryCategory, Ingredient[]>()
+    if (categories) {
+        for (const ing of recipe.ingredients) {
+            const cat = categories[ing.id] ?? 'Other'
+            if (!grouped.has(cat)) grouped.set(cat, [])
+            grouped.get(cat)!.push(ing)
+        }
+    }
+
+    const renderIngredient = (ing: Ingredient, isLast: boolean) => (
+        <div
+            key={ing.id}
+            onClick={() => toggle(ing.id)}
+            style={{
+                display: 'flex', alignItems: 'center', gap: 16, padding: '15px 22px',
+                cursor: 'pointer', opacity: checked[ing.id] ? 0.4 : 1, transition: 'all 0.2s',
+                borderBottom: isLast ? 'none' : `1px solid ${C.sagePale}`,
+                backgroundColor: checked[ing.id] ? C.sagePale : 'transparent',
+            }}
+        >
+            <div style={{
+                width: 22, height: 22, borderRadius: 6, flexShrink: 0,
+                backgroundColor: checked[ing.id] ? C.sage : 'transparent',
+                border: `2px solid ${checked[ing.id] ? C.sage : C.mist}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s',
+            }}>
+                {checked[ing.id] && <span style={{ color: C.white, fontSize: 13 }}>✓</span>}
+            </div>
+            <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, color: C.text, textDecoration: checked[ing.id] ? 'line-through' : 'none' }}>
+                    {ing.name}
+                </div>
+                <div style={{ fontSize: 12, color: C.textMuted }}>{ing.raw}</div>
+            </div>
+        </div>
+    )
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 36 }}>
             <div>
                 <div style={{ marginBottom: 28 }}>
                     <h2 style={{ fontSize: 28, fontFamily: "'Lora', serif", fontWeight: 700, color: C.forest, margin: '0 0 6px' }}>
-                        🛒 Groceries
+                        Groceries
                     </h2>
-                    <p style={{ color: C.textMuted, margin: 0, fontSize: 14 }}>Check off everything you need before you start.</p>
+                    <p style={{ color: C.textMuted, margin: 0, fontSize: 14 }}>
+                        {classifying ? 'Sorting by aisle…' : 'Check off everything you need before you start.'}
+                    </p>
                 </div>
-                <Card style={{ padding: 0, overflow: 'hidden' }}>
-                    {recipe.ingredients.map((ing: Ingredient, i: number) => (
-                        <div
-                            key={ing.id}
-                            onClick={() => toggle(ing.id)}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: 16, padding: '15px 22px',
-                                cursor: 'pointer', opacity: checked[ing.id] ? 0.4 : 1, transition: 'all 0.2s',
-                                borderBottom: i < recipe.ingredients.length - 1 ? `1px solid ${C.sagePale}` : 'none',
-                                backgroundColor: checked[ing.id] ? C.sagePale : 'transparent',
-                            }}
-                        >
-                            <div style={{
-                                width: 22, height: 22, borderRadius: 6, flexShrink: 0,
-                                backgroundColor: checked[ing.id] ? C.sage : 'transparent',
-                                border: `2px solid ${checked[ing.id] ? C.sage : C.mist}`,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s',
-                            }}>
-                                {checked[ing.id] && <span style={{ color: C.white, fontSize: 13 }}>✓</span>}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: 14, color: C.text, textDecoration: checked[ing.id] ? 'line-through' : 'none' }}>
-                                    {ing.name}
+
+                {/* Flat list while AI classifies — no spinner, no blocked UI */}
+                {classifying ? (
+                    <Card style={{ padding: 0, overflow: 'hidden' }}>
+                        {recipe.ingredients.map((ing, i) =>
+                            renderIngredient(ing, i === recipe.ingredients.length - 1)
+                        )}
+                    </Card>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                        {Array.from(grouped.entries()).map(([cat, ings]) => (
+                            <div key={cat}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                                    <span style={{ fontSize: 16 }}>{CATEGORY_ICONS[cat]}</span>
+                                    <span style={{ fontSize: 12, fontWeight: 800, color: C.textLight, textTransform: 'uppercase', letterSpacing: 1.5 }}>
+                                        {cat}
+                                    </span>
                                 </div>
-                                <div style={{ fontSize: 12, color: C.textMuted }}>{ing.raw}</div>
+                                <Card style={{ padding: 0, overflow: 'hidden' }}>
+                                    {ings.map((ing, i) => renderIngredient(ing, i === ings.length - 1))}
+                                </Card>
                             </div>
-                        </div>
-                    ))}
-                </Card>
+                        ))}
+                    </div>
+                )}
             </div>
             <div style={{ position: 'sticky', top: 130, alignSelf: 'start' }}>
                 <Card style={{ marginBottom: 16 }}>
@@ -282,38 +342,104 @@ function StepStage({
     )
 }
 
+// ─── Circular Timer ──────────────────────────────────────────────
+const RADIUS = 80
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS
+
+function CircularTimer({ timeLeft, totalSeconds, paused, done, onPause, onUnpause, onRestart }: {
+    timeLeft: number
+    totalSeconds: number
+    paused: boolean
+    done: boolean
+    onPause: () => void
+    onUnpause: () => void
+    onRestart: () => void
+}) {
+    const pct = totalSeconds > 0 ? timeLeft / totalSeconds : 0
+    const offset = CIRCUMFERENCE * (1 - pct)
+    const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+
+    return (
+        <Card style={{ padding: 28, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+            {/* Circle */}
+            <div style={{ position: 'relative', width: 200, height: 200 }}>
+                <svg width="200" height="200" style={{ transform: 'rotate(-90deg)' }}>
+                    {/* Track */}
+                    <circle cx="100" cy="100" r={RADIUS} fill="none" stroke={C.mist} strokeWidth="10" />
+                    {/* Progress */}
+                    <circle
+                        cx="100" cy="100" r={RADIUS} fill="none"
+                        stroke={done ? C.sageLight : paused ? C.textLight : C.sage}
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeDasharray={CIRCUMFERENCE}
+                        strokeDashoffset={offset}
+                        style={{ transition: 'stroke-dashoffset 1s linear, stroke 0.3s' }}
+                    />
+                </svg>
+                {/* Time label centered over the SVG */}
+                <div style={{
+                    position: 'absolute', inset: 0,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                }}>
+                    <div style={{ fontSize: 36, fontWeight: 900, color: done ? C.sageLight : C.forest, fontFamily: "'Lora', serif", lineHeight: 1 }}>
+                        {fmt(timeLeft)}
+                    </div>
+                    <div style={{ fontSize: 11, color: C.textMuted, marginTop: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
+                        {done ? 'done' : paused ? 'paused' : 'remaining'}
+                    </div>
+                </div>
+            </div>
+
+            {/* Controls */}
+            <div style={{ display: 'flex', gap: 10 }}>
+                {!done && (
+                    paused
+                        ? <button onClick={onUnpause} style={timerBtnStyle(C.sage, C.white)}>▶ Resume</button>
+                        : <button onClick={onPause} style={timerBtnStyle('transparent', C.sage, C.sage)}>⏸ Pause</button>
+                )}
+                <button onClick={onRestart} style={timerBtnStyle('transparent', C.textMuted, C.mist)}>↺ Restart</button>
+            </div>
+
+            {done && (
+                <div style={{ fontSize: 13, fontWeight: 700, color: C.sage }}>✅ Timer done — ready for the next step</div>
+            )}
+        </Card>
+    )
+}
+
+const timerBtnStyle = (bg: string, color: string, border?: string): React.CSSProperties => ({
+    backgroundColor: bg,
+    color,
+    border: `1.5px solid ${border ?? bg}`,
+    borderRadius: 10,
+    padding: '9px 18px',
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: 'pointer',
+    fontFamily: "'Nunito', sans-serif",
+})
+
 // ─── Cook ────────────────────────────────────────────────────────
 function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => void; onBack: () => void }) {
     const [idx, setIdx] = useState(0)
     const [timerActive, setTimerActive] = useState(false)
+    const [timerPaused, setTimerPaused] = useState(false)
     const [timeLeft, setTimeLeft] = useState<number | null>(null)
     const [timerDone, setTimerDone] = useState(false)
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
     const step = steps[idx]
     const isLast = idx === steps.length - 1
+    const timerSeconds = step?.timingMinutes ? Math.round(step.timingMinutes * 60) : null
 
-    // Clear interval and reset timer when step changes
-    useEffect(() => {
-        if (intervalRef.current) clearInterval(intervalRef.current)
-        setTimerActive(false)
-        setTimerDone(false)
-        setTimeLeft(null)
-    }, [idx])
+    const clearTimer = () => { if (intervalRef.current) clearInterval(intervalRef.current) }
 
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-    }, [])
-
-    const startTimer = (seconds: number) => {
-        if (intervalRef.current) clearInterval(intervalRef.current)
-        setTimeLeft(seconds)
-        setTimerActive(true)
-        setTimerDone(false)
+    const runInterval = () => {
+        clearTimer()
         intervalRef.current = setInterval(() => {
             setTimeLeft(t => {
                 if (t === null || t <= 1) {
-                    clearInterval(intervalRef.current!)
+                    clearTimer()
                     setTimerActive(false)
                     setTimerDone(true)
                     return 0
@@ -323,20 +449,46 @@ function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => voi
         }, 1000)
     }
 
-    const handleNext = () => {
-        if (intervalRef.current) clearInterval(intervalRef.current)
-        setTimerActive(false); setTimerDone(false); setTimeLeft(null)
-        isLast ? onNext() : setIdx(i => i + 1)
-    }
-    const handleBack = () => {
-        if (intervalRef.current) clearInterval(intervalRef.current)
-        setTimerActive(false); setTimerDone(false); setTimeLeft(null)
-        idx > 0 ? setIdx(i => i - 1) : onBack()
+    const startTimer = (seconds: number) => {
+        setTimeLeft(seconds)
+        setTimerActive(true)
+        setTimerPaused(false)
+        setTimerDone(false)
+        runInterval()
     }
 
+    const pauseTimer = () => {
+        clearTimer()
+        setTimerActive(false)
+        setTimerPaused(true)
+    }
+
+    const unpauseTimer = () => {
+        setTimerActive(true)
+        setTimerPaused(false)
+        runInterval()
+    }
+
+    const restartTimer = () => {
+        if (timerSeconds) startTimer(timerSeconds)
+    }
+
+    const resetTimerState = () => {
+        clearTimer()
+        setTimerActive(false)
+        setTimerPaused(false)
+        setTimerDone(false)
+        setTimeLeft(null)
+    }
+
+    // Reset timer when step changes
+    useEffect(() => { resetTimerState() }, [idx])
+
+    // Cleanup on unmount
+    useEffect(() => () => clearTimer(), [])
+
     const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
-    const timerSeconds = step?.timingMinutes ? Math.round(step.timingMinutes * 60) : null
-    const pct = timeLeft !== null && timerSeconds ? (timeLeft / timerSeconds) * 100 : 100
+    const timerStarted = timerActive || timerPaused || timerDone
 
     if (!step) return null
 
@@ -351,7 +503,8 @@ function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => voi
                             {step.text}
                         </p>
                     </Card>
-                    {timerSeconds && !timerActive && !timerDone && (
+
+                    {timerSeconds && !timerStarted && (
                         <button onClick={() => startTimer(timerSeconds)} style={{
                             backgroundColor: C.sagePale, border: `1.5px solid ${C.sageLight}`,
                             borderRadius: 12, padding: '15px 24px', fontSize: 14, color: C.sage,
@@ -361,27 +514,19 @@ function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => voi
                             <span style={{ fontSize: 20 }}>⏱</span> Start Timer · {fmt(timerSeconds)}
                         </button>
                     )}
-                    {timerActive && timeLeft !== null && (
-                        <Card style={{ padding: 28 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-                                <div style={{ fontSize: 52, fontWeight: 900, color: C.sage, fontFamily: "'Lora', serif", minWidth: 130 }}>
-                                    {fmt(timeLeft)}
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ height: 10, backgroundColor: C.mist, borderRadius: 5, overflow: 'hidden' }}>
-                                        <div style={{ height: '100%', width: `${pct}%`, backgroundColor: C.sage, borderRadius: 5, transition: 'width 1s linear' }} />
-                                    </div>
-                                    <div style={{ fontSize: 12, color: C.textMuted, marginTop: 8 }}>Timer running…</div>
-                                </div>
-                            </div>
-                        </Card>
+
+                    {timerStarted && timeLeft !== null && timerSeconds && (
+                        <CircularTimer
+                            timeLeft={timeLeft}
+                            totalSeconds={timerSeconds}
+                            paused={timerPaused}
+                            done={timerDone}
+                            onPause={pauseTimer}
+                            onUnpause={unpauseTimer}
+                            onRestart={restartTimer}
+                        />
                     )}
-                    {timerDone && (
-                        <div style={{ backgroundColor: C.sagePale, borderRadius: 12, padding: '16px 22px', border: `1px solid ${C.sageLight}`, display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ fontSize: 22 }}>✅</span>
-                            <span style={{ fontSize: 14, fontWeight: 700, color: C.sage }}>Timer done — ready for the next step</span>
-                        </div>
-                    )}
+
                     <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
                         {steps.map((_, i) => (
                             <div key={i} style={{ height: 4, flex: 1, borderRadius: 2, backgroundColor: i <= idx ? C.sage : C.mist }} />
@@ -391,8 +536,14 @@ function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => voi
             }
             sidebar={
                 <>
-                    <Btn onClick={handleNext}>{isLast ? 'Done · Next stage →' : 'Done · Next step →'}</Btn>
-                    <div style={{ marginTop: 10 }}><Btn variant="secondary" onClick={handleBack}>← Back</Btn></div>
+                    <Btn onClick={() => { resetTimerState(); isLast ? onNext() : setIdx(i => i + 1) }}>
+                        {isLast ? 'Done · Next stage →' : 'Done · Next step →'}
+                    </Btn>
+                    <div style={{ marginTop: 10 }}>
+                        <Btn variant="secondary" onClick={() => { resetTimerState(); idx > 0 ? setIdx(i => i - 1) : onBack() }}>
+                            ← Back
+                        </Btn>
+                    </div>
                 </>
             }
         />

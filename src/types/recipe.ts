@@ -16,6 +16,19 @@ export interface Substitution {
   sourceNote: 'preamble' | 'inline'
 }
 
+export type GroceryCategory =
+  | 'Produce'
+  | 'Protein'
+  | 'Dairy'
+  | 'Pantry'
+  | 'Spices & Seasonings'
+  | 'Oils & Vinegars'
+  | 'Canned & Jarred'
+  | 'Frozen'
+  | 'Bakery'
+  | 'Beverages'
+  | 'Other'
+
 export interface Ingredient {
   id: string
   raw: string // Original text exactly as it appeared in the recipe
@@ -25,6 +38,7 @@ export interface Ingredient {
   units: UnitEntry[] // All available unit representations (original + conversions)
   substitutions?: Substitution[]
   annotations?: string[]
+  category?: GroceryCategory
 }
 
 export type AnnotationType = 'tip' | 'warning' | 'substitution' | 'technique'
