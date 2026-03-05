@@ -1,8 +1,30 @@
 # Team Setup Guide
 
 ## Table of Contents
+- [📄 Updating Documentation](#-updating-documentation)
 - [🎨 Claude Code Figma Plugin (MCP + Skills)](#-claude-code-figma-plugin-mcp--skills)
 - [🔍 Chrome DevTools MCP](#-chrome-devtools-mcp)
+
+---
+
+## 📄 Updating Documentation
+
+When you add a feature, merge a PR, or make significant changes, run the update-docs command to keep the project docs in sync with the codebase.
+
+**In Claude Code, type:**
+```
+/update-docs
+```
+
+This will analyze the codebase and update:
+- **CLAUDE.md** — main Claude guidance (architecture, commands, status)
+- **docs/plans/Plan_Overview_Diagram.md** — Mermaid flow diagrams
+- **docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md** — extraction agent spec
+- **docs/plans/Initial_MVP_Plan.md** — annotates implemented acceptance criteria
+
+Each updated file gets a commit stamp so we can tell at a glance how out-of-date the docs are.
+
+> **Not covered here:** DECISION_LOG.md, RISK_LOG.md, and EVIDENCE_LOG.md each have their own dedicated commands.
 
 ---
 
