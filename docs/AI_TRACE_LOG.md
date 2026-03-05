@@ -55,6 +55,24 @@ Target: 3–6 entries minimum showing diverse usage (Code, Research, Documentati
 
 ---
 
+## **Trace #1: Code Generation + Planning**
+
+* Tool: Claude Sonnet 4.6 (via Claude Code)
+* Prompt: "Let's start implementing the recipe extraction agent. We can go step by step @docs/PLAN-RECIPE_EXTRACTION_AGENT.md. Let me know if you have any questions or if something doesn't make sense or is contradictory"
+* AI Response: Scaffolded the full Vite + React + TypeScript project with pnpm, created all shared types (`RecipeJSON`, `QueueEntry`, `ExtractionStatus`), built the IndexedDB storage layer (`db.ts`, `recipes.ts`, `queue.ts`), implemented 6 agent tools (`extractPreamble`, `parseIngredients`, `extractSteps`, `convertVolumeToWeight`, `convertWeightToVolume`, `validateOutput`) plus the ingredient density table, built the `recipeAgent.ts` orchestrator loop with OpenAI function calling, created the Vercel serverless CORS proxy (`api/fetch-recipe.ts`), implemented the `useRecipeExtraction` state machine hook, built all UI components (`RecipeInput`, `ExtractionProgressDisplay`, `IngredientList`, `StepList`, `OfflineBanner`), wired pages (`Home`, `Extract`, `RecipeDetail`), configured PWA, Vercel deployment, and Vite dev proxy for local URL testing.
+* What You Kept: To fill in.
+* What You Changed:
+  * Corrected model from `gpt-4o` to `gpt-4o-mini` at temp `0.3`
+  * Renamed the app to Simmer
+  * Added `convert_weight_to_volume` as a 7th tool (Claude proposed 6) to support users without a kitchen scale
+  * Promoted URL fetch and PlaybookView to MVP scope; demoted `map_annotations` and offline queue to stretch goals
+  * Switched from npm to pnpm
+  * Added a "Start Cooking" CTA button and `/cook/:id` route
+  * Updated the dev proxy User-Agent to a full browser string
+* Verification: To fill in.
+
+---
+
 ## **🚦 Usage Rules & Ethics**
 
 ### **✅ The Green Zone (Allowed & Encouraged)**
