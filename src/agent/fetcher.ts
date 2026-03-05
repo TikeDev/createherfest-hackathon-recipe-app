@@ -1,54 +1,44 @@
-import { Readability } from '@mozilla/readability'
+export interface ScrapedRecipe {
+  title: string
+  ingredients: string[]
+  instructions_list: string[]
+  yields: string
+  total_time: number | null
+  prep_time: number | null
+  cook_time: number | null
+  image: string
+  host: string
+  language: string
+  description: string
+}
 
 export interface FetchedRecipe {
-  text: string
+  scrapedRecipe: ScrapedRecipe
   title: string
   sourceDomain: string
 }
 
 /**
- * Fetches a recipe URL via the Vercel serverless proxy (to bypass CORS),
- * then extracts the article body with @mozilla/readability.
+ * Fetches and parses a recipe URL via the Python scraper Vercel function.
+ * Returns structured JSON from recipe-scrapers instead of raw HTML text.
  */
 export async function fetchRecipeFromUrl(url: string): Promise<FetchedRecipe> {
   const apiBase = import.meta.env.VITE_API_BASE ?? ''
-  const proxyUrl = `${apiBase}/api/fetch-recipe?url=${encodeURIComponent(url)}`
-  const response = await fetch(proxyUrl)
+  const response = await fetch(`${apiBase}/api/scrape-recipe`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url }),
+  })
+
+  const data = (await response.json()) as ScrapedRecipe | { error: string }
 
   if (!response.ok) {
-    const body = await response.json().catch(() => ({}))
-    throw new Error(
-      (body as { error?: string }).error ?? `Failed to fetch recipe: ${response.status}`,
-    )
+    throw new Error((data as { error: string }).error ?? `Scraper error: ${response.status}`)
   }
 
-  const html = await response.text()
+  const scraped = data as ScrapedRecipe
   const sourceDomain = new URL(url).hostname.replace(/^www\./, '')
+  const title = scraped.title || sourceDomain
 
-  // Parse HTML in a virtual document so Readability can extract the article
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(html, 'text/html')
-
-  // Fix relative URLs so Readability doesn't complain
-  const base = doc.createElement('base')
-  base.href = url
-  doc.head.prepend(base)
-
-  const reader = new Readability(doc)
-  const article = reader.parse()
-
-  if (!article) {
-    throw new Error(
-      'Could not extract recipe content from this page. Try pasting the recipe text directly.',
-    )
-  }
-
-  // Strip remaining HTML tags from the extracted content
-  const textContent = (article.textContent ?? '').replace(/\s{3,}/g, '\n\n').trim()
-
-  return {
-    text: textContent,
-    title: article.title || sourceDomain,
-    sourceDomain,
-  }
+  return { scrapedRecipe: scraped, title, sourceDomain }
 }

@@ -15,7 +15,7 @@ interface UseRecipeExtractionReturn {
 }
 
 const STEP_LABELS = {
-  fetching: 'Fetching recipe page...',
+  fetching: 'Scraping recipe...',
   extracting: 'Extracting recipe with AI...',
   saving: 'Saving recipe...',
   done: 'Done!',
@@ -50,7 +50,7 @@ export function useRecipeExtraction(): UseRecipeExtractionReturn {
           setStatus('fetching')
           advanceStep(STEP_LABELS.fetching)
           const fetched = await fetchRecipeFromUrl(input.value)
-          recipeText = fetched.text
+          recipeText = JSON.stringify(fetched.scrapedRecipe, null, 2)
           sourceUrl = input.value
           titleHint = fetched.title
         } else {
