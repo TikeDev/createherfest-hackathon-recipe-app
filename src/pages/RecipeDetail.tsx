@@ -65,6 +65,14 @@ export default function RecipeDetail() {
         </div>
       </div>
 
+      {/* Start Cooking CTA */}
+      <button
+        onClick={() => navigate(`/cook/${recipe.id}`)}
+        className="w-full bg-[#6B9E78] hover:bg-[#4e7a5a] text-white font-bold py-3 px-6 rounded-xl text-sm transition-colors"
+      >
+        Start Cooking →
+      </button>
+
       {/* Preamble tips */}
       {recipe.preamble.tips.length > 0 && (
         <section aria-labelledby="tips-heading">
