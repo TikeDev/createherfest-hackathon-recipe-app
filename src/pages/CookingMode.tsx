@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getRecipe } from '../storage/recipes'
 import type { RecipeJSON, Step, Ingredient } from '../types/recipe'
+
 
 // ─── Brand tokens ────────────────────────────────────────────────
 const C = {
@@ -287,23 +288,51 @@ function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => voi
     const [timerActive, setTimerActive] = useState(false)
     const [timeLeft, setTimeLeft] = useState<number | null>(null)
     const [timerDone, setTimerDone] = useState(false)
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
     const step = steps[idx]
     const isLast = idx === steps.length - 1
 
+    // Clear interval and reset timer when step changes
+    useEffect(() => {
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        setTimerActive(false)
+        setTimerDone(false)
+        setTimeLeft(null)
+    }, [idx])
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+    }, [])
+
     const startTimer = (seconds: number) => {
+        if (intervalRef.current) clearInterval(intervalRef.current)
         setTimeLeft(seconds)
         setTimerActive(true)
         setTimerDone(false)
-        const interval = setInterval(() => {
+        intervalRef.current = setInterval(() => {
             setTimeLeft(t => {
-                if (t === null || t <= 1) { clearInterval(interval); setTimerActive(false); setTimerDone(true); return 0 }
+                if (t === null || t <= 1) {
+                    clearInterval(intervalRef.current!)
+                    setTimerActive(false)
+                    setTimerDone(true)
+                    return 0
+                }
                 return t - 1
             })
         }, 1000)
     }
 
-    const handleNext = () => { setTimerActive(false); setTimerDone(false); setTimeLeft(null); isLast ? onNext() : setIdx(i => i + 1) }
-    const handleBack = () => { setTimerActive(false); setTimerDone(false); setTimeLeft(null); idx > 0 ? setIdx(i => i - 1) : onBack() }
+    const handleNext = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        setTimerActive(false); setTimerDone(false); setTimeLeft(null)
+        isLast ? onNext() : setIdx(i => i + 1)
+    }
+    const handleBack = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        setTimerActive(false); setTimerDone(false); setTimeLeft(null)
+        idx > 0 ? setIdx(i => i - 1) : onBack()
+    }
 
     const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
     const timerSeconds = step?.timingMinutes ? Math.round(step.timingMinutes * 60) : null
