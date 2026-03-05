@@ -7,6 +7,8 @@
     "dev": "vite",
     "dev:browser": "vite & wait-on http://localhost:5173 && ./scripts/launch-chrome-beta.sh",
     "dev:browser:fresh": "vite & wait-on http://localhost:5173 && ./scripts/launch-chrome-beta.sh --fresh",
+    "dev:browser:brave": "vite & wait-on http://localhost:5173 && .\\scripts\\launch-brave.bat",
+    "dev:browser:brave:fresh": "vite & wait-on http://localhost:5173 && .\\scripts\\launch-brave.bat --fresh",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint ."
