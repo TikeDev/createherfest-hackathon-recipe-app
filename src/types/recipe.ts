@@ -39,7 +39,7 @@ export interface Step {
   id: string
   index: number
   text: string
-  timingMinutes?: number
+  timingMinutes?: number | null
   isCritical: boolean // e.g. overnight marinade, dough rising — must not be skipped
   criticalNote?: string
   annotations: StepAnnotation[]
@@ -53,10 +53,10 @@ export interface Preamble {
 }
 
 export interface RecipeMetadata {
-  totalTimeMinutes?: number
-  prepTimeMinutes?: number
-  cookTimeMinutes?: number
-  servings?: string
+  totalTimeMinutes?: number | null
+  prepTimeMinutes?: number | null
+  cookTimeMinutes?: number | null
+  servings?: string | null
   rawText?: string // Preserved so the user can read the original while offline
 }
 

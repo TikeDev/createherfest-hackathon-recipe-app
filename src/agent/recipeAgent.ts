@@ -11,23 +11,98 @@ import type { RecipeJSON } from '@/types/recipe'
 
 const MAX_ITERATIONS = 30
 
-const SYSTEM_PROMPT = `You are a recipe extraction assistant. Your job is to parse recipe text into a structured JSON format using the tools provided.
+const SYSTEM_PROMPT = `You are a recipe extraction assistant. Your job is to parse recipe text into structured JSON by calling a sequence of tools, then assembling the final JSON exactly from the tool outputs.
 
-Follow this sequence:
-1. Call extract_preamble with the intro/preamble text to get tips, substitutions, and technique notes.
-2. Call parse_ingredients with the ingredient list section.
-3. Call extract_steps with the cooking instructions section.
-4. For each ingredient that has a volume measurement, call convert_volume_to_weight to add gram equivalents.
-5. For each ingredient that has a weight measurement, call convert_weight_to_volume to add volume equivalents for users without a scale.
-6. Output the final RecipeJSON as a JSON code block. Do not call any more tools after step 5 is done.
+## CRITICAL RULE: Tool outputs are the data. Do not reconstruct them.
 
-Rules you must follow:
-- NEVER fabricate ingredient substitutions. Only include substitutions explicitly stated in the source text.
-- Flag uncertainty on conversions rather than guessing. Use the conversion tools as provided.
-- Preserve the author's preamble intent — do not paraphrase tips.
-- If a step requires overnight marinating, extended resting, or any timing that cannot be shortened, mark it as critical.
-- Output the final result as a single JSON code block containing the complete RecipeJSON object.
-- Do NOT include "id" or "extractedAt" fields in your output — they will be injected automatically.`
+When you call a tool, its return value in the "tool" message IS the structured data you must use. Copy it verbatim into the final JSON. Never re-derive, rewrite, or omit fields that a tool returned.
+
+## Step-by-step instructions
+
+Step 1 — Call extract_preamble.
+  Pass: the full intro/preamble text from the recipe.
+  The tool returns: { raw, tips, substitutions, techniqueNotes }
+  This entire object becomes the "preamble" field in the final JSON.
+
+Step 2 — Call parse_ingredients.
+  Pass: the full ingredient list.
+  The tool returns: an array of ingredient objects. Each object includes:
+    - id (a UUID string — copy exactly as returned)
+    - raw (original ingredient line verbatim)
+    - name, quantity, unit
+    - units (array of unit entries)
+    - substitutions, annotations
+  This entire array becomes the "ingredients" field in the final JSON.
+
+Step 3 — Call extract_steps.
+  Pass: all cooking instruction steps.
+  The tool returns: an array of step objects. Each object includes:
+    - id (a UUID string — copy exactly as returned)
+    - index, text, isCritical, criticalNote, timingMinutes, annotations
+  This entire array becomes the "steps" field in the final JSON.
+
+Step 4 — For each ingredient with a volume measurement (cups, tablespoons, ml, tsp, etc.):
+  Call convert_volume_to_weight with ingredientName, quantity, unit.
+  The tool returns a UnitEntry object. Append it to the "units" array of the matching ingredient from Step 2.
+
+Step 5 — For each ingredient with a weight measurement (g, grams, oz, lbs):
+  Call convert_weight_to_volume with ingredientName, quantity, unit.
+  The tool returns a UnitEntry object. Append it to the "units" array of the matching ingredient from Step 2.
+
+Step 6 — Output the final JSON.
+  When all tool calls are complete, output a single JSON code block. Do not call any more tools.
+
+## How to assemble the final JSON
+
+{
+  "title": "<recipe title from the text>",
+  "sourceUrl": "<URL if provided, otherwise omit>",
+  "sourceDomain": "<domain of sourceUrl if provided, otherwise omit>",
+  "preamble": <exact object returned by extract_preamble>,
+  "ingredients": <exact array returned by parse_ingredients, with units arrays updated by conversion calls>,
+  "steps": <exact array returned by extract_steps>,
+  "metadata": {
+    "totalTimeMinutes": <number or omit if not mentioned>,
+    "prepTimeMinutes": <number or omit if not mentioned>,
+    "cookTimeMinutes": <number or omit if not mentioned>,
+    "servings": "<string or omit if not mentioned>"
+  }
+}
+
+IMPORTANT: Do NOT include "id" or "extractedAt" at the top level — those are injected by the application.
+IMPORTANT: The "id" on each ingredient and each step MUST be copied exactly from the tool output. Do not replace or omit these ids.
+IMPORTANT: The "raw" field on each ingredient MUST be copied exactly from the tool output.
+IMPORTANT: "units", "annotations", and "substitutions" arrays on each ingredient MUST be copied from the tool output (plus any UnitEntry objects appended in Steps 4–5).
+IMPORTANT: The "annotations" array on each step MUST be copied exactly from the tool output.
+
+## Rules for specific fields
+
+- timingMinutes on a step: use the number if timing was mentioned, use null if unknown or not mentioned.
+- isCritical on a step: must be true or false (boolean), never null or a string.
+- substitutions: NEVER fabricate. Only include substitutions explicitly stated in the source text, as returned by the tools.
+- quantity and unit on an ingredient: may be null (e.g. "salt to taste").
+
+## Example of correct assembly
+
+extract_preamble returned:
+  { "raw": "This is a forgiving cake.", "tips": ["Use room temp butter"], "substitutions": [], "techniqueNotes": [] }
+
+parse_ingredients returned:
+  { "id": "abc-123", "raw": "2 cups all-purpose flour", "name": "all-purpose flour", "quantity": 2, "unit": "cup",
+    "units": [{"original": "2 cup", "confidenceLevel": "high"}], "substitutions": [], "annotations": [] }
+
+convert_volume_to_weight returned:
+  { "original": "2 cup", "grams": 240, "densitySource": "usda", "confidenceLevel": "high" }
+
+The ingredient in the final JSON must be:
+  { "id": "abc-123", "raw": "2 cups all-purpose flour", "name": "all-purpose flour", "quantity": 2, "unit": "cup",
+    "units": [
+      {"original": "2 cup", "confidenceLevel": "high"},
+      {"original": "2 cup", "grams": 240, "densitySource": "usda", "confidenceLevel": "high"}
+    ],
+    "substitutions": [], "annotations": [] }
+
+Note: "abc-123" is copied from the tool output. The units array has both the original entry and the appended conversion.`
 
 function buildInitialMessages(
   recipeText: string,
@@ -94,11 +169,11 @@ export async function runRecipeAgent(options: RunAgentOptions): Promise<RecipeJS
 
   while (iterations < MAX_ITERATIONS) {
     iterations++
-    onProgress?.(`Calling model (iteration ${iterations})...`)
+    onProgress?.(`[iter ${iterations}] Calling model...`)
 
     const response = await client.chat.completions.create({
       model: 'gpt-5-nano',
-      temperature: 0.3,
+      temperature: 1,
       messages,
       tools: openAITools,
       tool_choice: 'auto',
@@ -114,8 +189,11 @@ export async function runRecipeAgent(options: RunAgentOptions): Promise<RecipeJS
     if (choice.finish_reason === 'tool_calls' && message.tool_calls) {
       for (const toolCall of message.tool_calls) {
         const args = JSON.parse(toolCall.function.arguments) as unknown
-        onProgress?.(`Running tool: ${toolCall.function.name}`)
+        const argsPreview = JSON.stringify(args).slice(0, 80)
+        onProgress?.(`[iter ${iterations}] Tool: ${toolCall.function.name} — ${argsPreview}`)
         const result = dispatchTool(toolCall.function.name, args)
+        const resultPreview = JSON.stringify(result).slice(0, 80)
+        onProgress?.(`[iter ${iterations}] ✓ ${toolCall.function.name} → ${resultPreview}`)
         messages.push({
           role: 'tool',
           tool_call_id: toolCall.id,
@@ -126,7 +204,9 @@ export async function runRecipeAgent(options: RunAgentOptions): Promise<RecipeJS
     }
 
     if (choice.finish_reason === 'stop' && message.content) {
-      onProgress?.('Parsing final recipe JSON...')
+      const contentPreview = message.content.slice(0, 200)
+      onProgress?.(`[iter ${iterations}] Model stopped. Preview: ${contentPreview}`)
+      onProgress?.(`[iter ${iterations}] Parsing final recipe JSON...`)
       const raw = extractJSONFromContent(message.content)
 
       // Inject required fields the model may not have set
@@ -143,6 +223,7 @@ export async function runRecipeAgent(options: RunAgentOptions): Promise<RecipeJS
       return parseRecipeJSON(withDefaults)
     }
 
+    onProgress?.(`[iter ${iterations}] Unexpected finish_reason: ${choice.finish_reason}`)
     throw new Error(`Unexpected finish_reason: ${choice.finish_reason}`)
   }
 

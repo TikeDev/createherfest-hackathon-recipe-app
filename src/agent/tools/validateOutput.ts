@@ -38,7 +38,7 @@ const StepSchema = z.object({
   id: z.string(),
   index: z.number(),
   text: z.string(),
-  timingMinutes: z.number().optional(),
+  timingMinutes: z.number().nullish(),
   isCritical: z.boolean(),
   criticalNote: z.string().optional(),
   annotations: z.array(StepAnnotationSchema),
@@ -61,10 +61,10 @@ const RecipeJSONSchema = z.object({
   ingredients: z.array(IngredientSchema).min(1),
   steps: z.array(StepSchema).min(1),
   metadata: z.object({
-    totalTimeMinutes: z.number().optional(),
-    prepTimeMinutes: z.number().optional(),
-    cookTimeMinutes: z.number().optional(),
-    servings: z.string().optional(),
+    totalTimeMinutes: z.number().nullable().optional(),
+    prepTimeMinutes: z.number().nullable().optional(),
+    cookTimeMinutes: z.number().nullable().optional(),
+    servings: z.string().nullable().optional(),
     rawText: z.string().optional(),
   }),
 })
