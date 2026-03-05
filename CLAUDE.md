@@ -95,22 +95,12 @@ These must never be violated:
 - Restricted techniques/tools are always blocked
 - Unsafe ingredient alternatives (allergen/excluded) are never shown even if present in source
 
-## Chrome DevTools MCP Debugging Flow
 
-When debugging with Claude Code + Chrome DevTools MCP:
+## Browser / DevTools
 
-1. Start dev server with Chrome: `pnpm dev:browser`
-2. In Claude Code, verify MCP is connected: `/mcp` → should show `chrome-devtools`
-3. Standard debugging sequence:
-   - `list_pages` → find the right page ID
-   - `select_page` → focus that page
-   - `take_snapshot` → read DOM state (prefer over screenshot)
-   - `evaluate_script` → run JS to check element positions, state, etc.
-   - `list_console_messages` with `types: ["error"]` → catch runtime errors
-   - `list_network_requests` → find stuck/failed requests
-
-**Rule:** Never declare a UI element "correct" based on a screenshot alone.
-Always verify with `evaluate_script` and `getBoundingClientRect()` first.
+**Default browser is Chrome Beta** — only use regular Chrome if explicitly asked.
+- Never open a new browser window or tab
+- If `list_pages` returns only `about:blank`, ask the user to confirm the dev server is running — do not navigate
 
 ## Related Docs
 
@@ -120,6 +110,7 @@ Always verify with `evaluate_script` and `getBoundingClientRect()` first.
 | [docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md](docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md) | Agent pipeline, tools, output format, offline queue | Building or modifying the AI extraction flow |
 | [docs/plans/Plan_Overview_Diagram.md](docs/plans/Plan_Overview_Diagram.md) | Mermaid architecture diagrams | Understanding system flow at a glance |
 | [PERPLEXITY_GUIDE.md](PERPLEXITY_GUIDE.md) | How the team uses Perplexity Enterprise for research | Before starting research tasks or looking up library docs |
+| [docs/CHROME_DEVTOOLS_MCP_ONBOARDING.md](docs/CHROME_DEVTOOLS_MCP_ONBOARDING.md) | DevTools MCP patterns, debugging sequences, anti-patterns | Debugging UI, inspecting DOM/console/network, verifying element position |
 
 <!-- a11y-agent-team: start -->
 # Accessibility-First Development

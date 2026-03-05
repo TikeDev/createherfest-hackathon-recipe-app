@@ -54,36 +54,41 @@ claude mcp add --transport http figma https://mcp.figma.com/mcp --scope project
 
 Gives Claude Code the ability to inspect and interact with a Chrome browser — useful for debugging the PWA, checking network requests, and testing accessibility.
 
-**Prerequisites:** Node.js v20.19+, Chrome (current stable or newer)
+**Prerequisites:** Node.js v20.19+, Chrome Beta (preferred) or Chrome stable
 
-### User-level install (global, recommended)
+> **How this project works:** Instead of letting the MCP launch its own Chrome, we connect it to an existing Chrome Beta instance running with remote debugging on port 9222. The `pnpm dev:browser` script handles this automatically.
 
+### Project-level setup (use this)
+
+1. **Copy the MCP config template:**
+   ```bash
+   cp .mcp.json.example .mcp.json
+   ```
+   `.mcp.json` is gitignored — no secrets, just a port number. The template already has `--browser-url=http://127.0.0.1:9222` configured.
+
+2. **Start Vite + Chrome Beta with remote debugging:**
+   ```bash
+   pnpm dev:browser
+   ```
+   This starts the dev server, waits for it to be ready, then launches Chrome Beta with `--remote-debugging-port=9222`.
+
+3. **Restart Claude Code** so it picks up `.mcp.json`.
+
+### Install the MCP (if not already installed)
+
+**User-level (global, recommended):**
 ```bash
-claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest
+claude mcp add chrome-devtools --scope user npx chrome-devtools-mcp@latest --browser-url=http://127.0.0.1:9222
 ```
 
-### Project-level install
-
+**Project-level only:**
 ```bash
-claude mcp add chrome-devtools npx chrome-devtools-mcp@latest --scope project
+claude mcp add chrome-devtools --scope project npx chrome-devtools-mcp@latest --browser-url=http://127.0.0.1:9222
 ```
 
-### Slim mode (token-efficient, no advanced features)
-
-Add `--slim --headless` flags — useful for CI or low-context sessions. Edit your MCP config manually:
-
-```json
-{
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest", "--slim", "--headless"]
-    }
-  }
-}
-```
+> **Note:** The `--browser-url` flag is required for this project. Without it, the MCP tries to launch its own Chrome instead of connecting to the one started by `pnpm dev:browser`.
 
 ### Verify the install
 
-Ask Claude: `"Check the performance of https://developers.chrome.com"` — Chrome will launch automatically.
+With `pnpm dev:browser` running, ask Claude: `"Do you see the running app?"` — Claude should respond with the page at `localhost:5173`.
 
