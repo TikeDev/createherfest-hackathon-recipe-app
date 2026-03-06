@@ -104,12 +104,12 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
       aria-modal={isMobile ? true : undefined}
       aria-labelledby={isMobile ? 'side-panel-title' : undefined}
       aria-label={isMobile ? undefined : 'Settings sidebar'}
-      className={`flex h-full w-72 flex-col bg-white border-mist-pale overflow-y-auto dark:bg-[#1e2d28] dark:border-forest ${
+      className={`flex h-full w-72 flex-col bg-cream border-mist-pale overflow-y-auto dark:border-forest ${
         prefs.panelSide === 'left' ? 'border-r' : 'border-l'
       }`}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-5 pb-4">
+      {/* Header — extra left padding when panel is left to clear the fixed hamburger button */}
+      <div className={`flex items-center justify-between pt-5 pb-4 ${prefs.panelSide === 'left' ? 'pl-[4.5rem] pr-4' : 'px-4'}`}>
         <span id="side-panel-title" className="text-xl font-headline text-sage">Simmer</span>
         {isMobile && (
           <button
@@ -167,11 +167,11 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
               onClick={() => updatePrefs({ fontSize: prefs.fontSize - 1 })}
               disabled={prefs.fontSize <= FONT_SIZE_MIN}
               aria-label="Decrease font size"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-pale text-sm font-bold text-forest hover:bg-surface focus:outline-none focus:ring-2 focus:ring-sage disabled:opacity-30 disabled:cursor-not-allowed dark:border-forest dark:text-cream dark:hover:bg-forest/50"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-pale text-sm font-bold text-forest hover:bg-surface focus:outline-none focus:ring-2 focus:ring-sage disabled:opacity-30 disabled:cursor-not-allowed dark:border-forest dark:hover:bg-forest/50"
             >
               &minus;
             </button>
-            <span className="min-w-[3rem] text-center text-sm font-medium text-forest dark:text-cream" aria-live="polite">
+            <span className="min-w-[3rem] text-center text-sm font-medium text-forest" aria-live="polite">
               {prefs.fontSize}px
             </span>
             <button
@@ -179,7 +179,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
               onClick={() => updatePrefs({ fontSize: prefs.fontSize + 1 })}
               disabled={prefs.fontSize >= FONT_SIZE_MAX}
               aria-label="Increase font size"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-pale text-sm font-bold text-forest hover:bg-surface focus:outline-none focus:ring-2 focus:ring-sage disabled:opacity-30 disabled:cursor-not-allowed dark:border-forest dark:text-cream dark:hover:bg-forest/50"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-pale text-sm font-bold text-forest hover:bg-surface focus:outline-none focus:ring-2 focus:ring-sage disabled:opacity-30 disabled:cursor-not-allowed dark:border-forest dark:hover:bg-forest/50"
             >
               +
             </button>
@@ -213,7 +213,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
                   className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium motion-safe:transition-colors ${
                     selected
                       ? 'bg-sage text-white'
-                      : 'bg-white border border-mist-pale text-forest/70 hover:bg-surface dark:bg-forest/50 dark:text-cream/70 dark:border-forest'
+                      : 'bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream/70 dark:border-forest'
                   }`}
                 >
                   {opt.label}
@@ -266,7 +266,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
                   className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium motion-safe:transition-colors ${
                     selected
                       ? 'bg-sage text-white'
-                      : 'bg-white border border-mist-pale text-forest/70 hover:bg-surface dark:bg-forest/50 dark:text-cream/70 dark:border-forest'
+                      : 'bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream/70 dark:border-forest'
                   }`}
                 >
                   {opt.label}
@@ -298,7 +298,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
                 className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium capitalize motion-safe:transition-colors ${
                   selected
                     ? 'bg-sage text-white'
-                    : 'bg-white border border-mist-pale text-forest/70 hover:bg-surface dark:bg-forest/50 dark:text-cream/70 dark:border-forest'
+                    : 'bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream/70 dark:border-forest'
                 }`}
               >
                 {side}

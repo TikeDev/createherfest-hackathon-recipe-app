@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-headline text-forest">
+        <h1 className="text-2xl font-headline text-forest dark:text-cream">
           {hasSession ? 'Here\'s what we found.' : 'My Recipes'}
         </h1>
         <Link
@@ -53,18 +53,18 @@ export default function Home() {
         <div className="rounded-xl bg-surface border border-mist-pale px-4 py-3 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             {session?.energy && (
-              <span className="rounded-full bg-white border border-mist text-sage text-xs font-semibold px-3 py-1">
+              <span className="rounded-full bg-surface border border-mist text-sage text-xs font-semibold px-3 py-1 dark:border-forest">
                 {ENERGY_LABELS[session.energy]}
               </span>
             )}
             {session?.note && (
-              <span className="text-sm text-forest/70 italic">"{session.note}"</span>
+              <span className="text-sm text-forest/70 italic dark:text-cream/70">"{session.note}"</span>
             )}
           </div>
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="text-xs text-forest/50 hover:text-sage transition-colors"
+            className="text-xs text-forest/50 hover:text-sage transition-colors dark:text-cream/50"
           >
             ← Start over
           </button>
@@ -72,14 +72,14 @@ export default function Home() {
       )}
 
       {loading && (
-        <p className="text-sm text-forest/60" role="status">
+        <p className="text-sm text-forest/60 dark:text-cream/60" role="status">
           Simmer is thinking...
         </p>
       )}
 
       {!loading && recipes.length === 0 && (
         <div className="rounded-lg border border-dashed border-mist-pale px-6 py-12 text-center space-y-3">
-          <p className="text-forest/60 text-sm">No recipes yet.</p>
+          <p className="text-forest/60 text-sm dark:text-cream/60">No recipes yet.</p>
           <Link
             to="/extract"
             className="inline-block text-sm text-sage font-medium underline hover:text-sage-dark"
@@ -100,15 +100,15 @@ export default function Home() {
               <li key={recipe.id}>
                 <Link
                   to={`/recipe/${recipe.id}`}
-                  className="block rounded-lg border border-mist-pale bg-white px-4 py-4 hover:border-mist hover:shadow-sm transition-all"
+                  className="block rounded-lg border border-mist-pale bg-surface px-4 py-4 hover:border-mist hover:shadow-sm transition-all dark:border-forest dark:hover:border-mist"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <h2 className="font-headline text-forest text-sm leading-snug">
+                    <h2 className="font-headline text-forest text-sm leading-snug dark:text-cream">
                       {recipe.title}
                     </h2>
-                    <span className="flex-shrink-0 text-xs text-forest/50">{savedDate}</span>
+                    <span className="flex-shrink-0 text-xs text-forest/50 dark:text-cream/50">{savedDate}</span>
                   </div>
-                  <div className="mt-1 flex flex-wrap gap-3 text-xs text-forest/50">
+                  <div className="mt-1 flex flex-wrap gap-3 text-xs text-forest/50 dark:text-cream/50">
                     {recipe.sourceDomain && recipe.sourceDomain !== 'demo' && (
                       <span>{recipe.sourceDomain}</span>
                     )}

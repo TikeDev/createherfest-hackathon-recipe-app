@@ -43,7 +43,7 @@ export function StepList({ steps }: StepListProps) {
             <li
               key={step.id}
               className={`flex gap-3 rounded-lg border p-4 transition-colors ${
-                isDone ? 'border-mist-pale bg-surface opacity-60' : 'border-mist-pale bg-white'
+                isDone ? 'border-mist-pale bg-surface opacity-60' : 'border-mist-pale bg-surface'
               } ${step.isCritical ? 'border-l-4 border-l-amber-400' : ''}`}
             >
               {/* Checkbox */}

@@ -54,14 +54,14 @@ export default function Landing() {
         {/* Brand header */}
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-headline text-sage">Simmer</h1>
-          <p className="text-sm text-forest/60">Cook what your brain and body need today.</p>
+          <p className="text-sm text-forest/60 dark:text-cream/60">Cook what your brain and body need today.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
 
           {/* Energy level chips */}
           <fieldset className="space-y-3">
-            <legend className="text-sm font-semibold text-forest">
+            <legend className="text-sm font-semibold text-forest dark:text-cream">
               How much energy do you have today?
             </legend>
             <div className="flex gap-3" role="group">
@@ -76,7 +76,7 @@ export default function Landing() {
                     className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-semibold transition-all duration-200 ${
                       selected
                         ? 'border-sage bg-surface text-sage shadow-sm'
-                        : 'border-mist-pale bg-white text-forest/60 hover:border-mist hover:text-forest'
+                        : 'border-mist-pale bg-surface text-forest/60 hover:border-mist hover:text-forest dark:text-cream/60 dark:border-forest dark:hover:border-mist dark:hover:text-cream'
                     }`}
                   >
                     <span className="text-xl" aria-hidden="true">{opt.emoji}</span>
@@ -89,7 +89,7 @@ export default function Landing() {
 
           {/* Craving text input */}
           <div className="space-y-3">
-            <label htmlFor="craving-input" className="block text-sm font-semibold text-forest">
+            <label htmlFor="craving-input" className="block text-sm font-semibold text-forest dark:text-cream">
               What sounds good to eat?
             </label>
             <div className="relative">
@@ -99,13 +99,13 @@ export default function Landing() {
                 onChange={(e) => setNote(e.target.value)}
                 rows={3}
                 placeholder=""
-                className="w-full rounded-xl border-2 border-mist-pale bg-white px-4 py-3 text-sm text-forest focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none transition-colors"
+                className="w-full rounded-xl border-2 border-mist-pale bg-surface px-4 py-3 text-sm text-forest focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none transition-colors dark:text-cream dark:border-forest dark:focus:border-sage"
               />
               {/* Animated placeholder overlay — hidden once user starts typing */}
               {!note && (
                 <div
                   aria-hidden="true"
-                  className={`absolute top-3 left-4 right-4 text-sm text-forest/40 pointer-events-none select-none transition-opacity duration-300 ${
+                  className={`absolute top-3 left-4 right-4 text-sm text-forest/40 dark:text-cream/40 pointer-events-none select-none transition-opacity duration-300 ${
                     placeholderVisible ? 'opacity-100' : 'opacity-0'
                   }`}
                 >
@@ -126,7 +126,7 @@ export default function Landing() {
         </form>
 
         {/* Browse without session */}
-        <p className="text-center text-xs text-forest/50">
+        <p className="text-center text-xs text-forest/50 dark:text-cream/50">
           Already know what you want?{' '}
           <button
             type="button"

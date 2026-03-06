@@ -28,7 +28,7 @@ export default function ThemeToggle({ compact = false }: ThemeToggleProps) {
         type="button"
         onClick={nextTheme}
         aria-label={`Theme: ${current.label}. Click to change.`}
-        className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-pale bg-white/90 text-sm hover:bg-surface focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 motion-safe:transition-colors dark:bg-forest/80 dark:border-forest"
+        className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-pale bg-surface text-sm hover:bg-mist-pale focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 motion-safe:transition-colors dark:border-forest"
       >
         <span aria-hidden="true">{current.icon}</span>
       </button>
@@ -65,7 +65,7 @@ export default function ThemeToggle({ compact = false }: ThemeToggleProps) {
               className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-medium motion-safe:transition-colors ${
                 selected
                   ? 'bg-sage text-white'
-                  : 'bg-white border border-mist-pale text-forest/70 hover:bg-surface dark:bg-forest/50 dark:text-cream/70 dark:border-forest'
+                  : 'bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream/70 dark:border-forest'
               }`}
             >
               <span aria-hidden="true" className="mr-1">{opt.icon}</span>
