@@ -658,8 +658,8 @@ export default function CookingModeWrapper() {
     const recipe = useRecipe(id ?? '')
 
     if (!recipe) return (
-        <div style={{ padding: 40, fontFamily: 'sans-serif', color: '#7A8C84', textAlign: 'center' }}>
-            Loading recipe…
+        <div style={{ padding: 40, fontFamily: "'Nunito', sans-serif", color: '#7A8C84', textAlign: 'center' }}>
+            Simmer is thinking...
         </div>
     )
 

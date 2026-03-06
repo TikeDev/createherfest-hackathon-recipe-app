@@ -32,7 +32,7 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Tab toggle */}
-      <div role="tablist" className="flex rounded-lg border border-gray-200 p-1 gap-1">
+      <div role="tablist" className="flex rounded-lg border border-mist-pale p-1 gap-1">
         <button
           type="button"
           role="tab"
@@ -40,8 +40,8 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
           onClick={() => setTab('url')}
           className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
             tab === 'url'
-              ? 'bg-emerald-600 text-white'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-sage text-white'
+              : 'text-forest/70 hover:text-forest'
           }`}
         >
           From URL
@@ -53,8 +53,8 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
           onClick={() => setTab('text')}
           className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
             tab === 'text'
-              ? 'bg-emerald-600 text-white'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-sage text-white'
+              : 'text-forest/70 hover:text-forest'
           }`}
         >
           Paste Text
@@ -63,7 +63,7 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
 
       {tab === 'url' ? (
         <div>
-          <label htmlFor="recipe-url" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="recipe-url" className="block text-sm font-medium text-forest mb-1">
             Recipe URL
           </label>
           <input
@@ -73,12 +73,12 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://www.example.com/recipes/chocolate-cake"
             disabled={isLoading}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200 disabled:opacity-50"
+            className="w-full rounded-lg border border-mist-pale px-4 py-3 text-sm focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 disabled:opacity-50"
           />
         </div>
       ) : (
         <div>
-          <label htmlFor="recipe-text" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="recipe-text" className="block text-sm font-medium text-forest mb-1">
             Recipe Text
           </label>
           <textarea
@@ -88,7 +88,7 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
             placeholder="Paste the full recipe here — ingredients, steps, and any intro notes."
             rows={10}
             disabled={isLoading}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200 disabled:opacity-50 resize-y"
+            className="w-full rounded-lg border border-mist-pale px-4 py-3 text-sm focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 disabled:opacity-50 resize-y"
           />
         </div>
       )}
@@ -96,9 +96,9 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
       <button
         type="submit"
         disabled={isLoading || (tab === 'url' ? !url.trim() : !text.trim())}
-        className="w-full rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full rounded-lg bg-sage px-6 py-3 text-sm font-semibold text-white hover:bg-sage-dark focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {isLoading ? 'Processing...' : 'Extract Recipe'}
+        {isLoading ? 'Simmer is thinking...' : 'Extract Recipe'}
       </button>
     </form>
   )

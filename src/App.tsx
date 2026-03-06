@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Landing from './pages/Landing'
 import Home from './pages/Home'
 import CookingModeWrapper from './pages/CookingMode'
 import Extract from './pages/Extract'
@@ -10,7 +11,8 @@ export default function App() {
     <BrowserRouter>
       <OfflineBanner />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/recipes" element={<Home />} />
         <Route path="/extract" element={<Extract />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/cook/:id" element={<CookingModeWrapper />} />

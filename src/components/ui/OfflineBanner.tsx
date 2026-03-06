@@ -20,7 +20,7 @@ export function OfflineBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-0 inset-x-0 z-50 bg-amber-500 text-white text-sm font-medium px-4 py-3 text-center"
+      className="fixed bottom-0 inset-x-0 z-50 bg-[#FFF7ED] border-t-2 border-[#FFB347] text-[#B85C00] text-sm font-medium px-4 py-3 text-center"
     >
       You're offline. Saved recipes are still available.
     </div>

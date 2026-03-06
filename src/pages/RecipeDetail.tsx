@@ -20,8 +20,8 @@ export default function RecipeDetail() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-12 text-center text-sm text-gray-500" role="status">
-        Loading recipe...
+      <div className="max-w-2xl mx-auto px-4 py-12 text-center text-sm text-forest/60" role="status">
+        Simmer is thinking...
       </div>
     )
   }
@@ -29,8 +29,8 @@ export default function RecipeDetail() {
   if (!recipe) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12 text-center space-y-4">
-        <p className="text-gray-500">Recipe not found.</p>
-        <Link to="/" className="text-sm text-emerald-600 underline">
+        <p className="text-forest/60">We couldn't find that recipe.</p>
+        <Link to="/recipes" className="text-sm text-sage underline hover:text-sage-dark">
           Back to recipes
         </Link>
       </div>
@@ -49,13 +49,13 @@ export default function RecipeDetail() {
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="text-sm text-emerald-600 hover:underline mb-4 block"
+          className="text-sm text-sage hover:underline mb-4 block"
           aria-label="Go back"
         >
           ← Back
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">{recipe.title}</h1>
-        <div className="mt-1 flex flex-wrap gap-3 text-xs text-gray-500">
+        <h1 className="text-2xl font-headline text-forest">{recipe.title}</h1>
+        <div className="mt-1 flex flex-wrap gap-3 text-xs text-forest/60">
           {recipe.sourceDomain && <span>From {recipe.sourceDomain}</span>}
           <span>Saved {extractedDate}</span>
           {recipe.metadata.totalTimeMinutes && (
@@ -68,21 +68,21 @@ export default function RecipeDetail() {
       {/* Start Cooking CTA */}
       <button
         onClick={() => navigate(`/cook/${recipe.id}`)}
-        className="w-full bg-[#6B9E78] hover:bg-[#4e7a5a] text-white font-bold py-3 px-6 rounded-xl text-sm transition-colors"
+        className="w-full bg-sage hover:bg-sage-dark text-white font-semibold py-3 px-6 rounded-xl text-sm transition-colors"
       >
-        Start Cooking →
+        I'm ready. Let's cook →
       </button>
 
       {/* Preamble tips */}
       {recipe.preamble.tips.length > 0 && (
         <section aria-labelledby="tips-heading">
-          <h2 id="tips-heading" className="text-base font-semibold text-gray-900 mb-2">
+          <h2 id="tips-heading" className="text-base font-headline text-forest mb-2">
             Tips from the author
           </h2>
           <ul className="space-y-1.5">
             {recipe.preamble.tips.map((tip, i) => (
-              <li key={i} className="text-sm text-gray-700 flex gap-2">
-                <span aria-hidden="true" className="text-emerald-500 mt-0.5">•</span>
+              <li key={i} className="text-sm text-forest/80 flex gap-2">
+                <span aria-hidden="true" className="text-sage mt-0.5">•</span>
                 {tip}
               </li>
             ))}
@@ -94,13 +94,13 @@ export default function RecipeDetail() {
       <StepList steps={recipe.steps} />
 
       {recipe.sourceUrl && (
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-forest/50">
           Original recipe:{' '}
           <a
             href={recipe.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-gray-600"
+            className="underline hover:text-forest"
           >
             {recipe.sourceDomain}
           </a>

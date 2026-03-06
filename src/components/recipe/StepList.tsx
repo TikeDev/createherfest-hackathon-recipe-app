@@ -29,7 +29,7 @@ export function StepList({ steps }: StepListProps) {
 
   return (
     <section aria-labelledby="steps-heading">
-      <h2 id="steps-heading" className="text-lg font-semibold text-gray-900 mb-3">
+      <h2 id="steps-heading" className="text-lg font-headline text-forest mb-3">
         Instructions
       </h2>
 
@@ -43,7 +43,7 @@ export function StepList({ steps }: StepListProps) {
             <li
               key={step.id}
               className={`flex gap-3 rounded-lg border p-4 transition-colors ${
-                isDone ? 'border-gray-200 bg-gray-50 opacity-60' : 'border-gray-200 bg-white'
+                isDone ? 'border-mist-pale bg-surface opacity-60' : 'border-mist-pale bg-white'
               } ${step.isCritical ? 'border-l-4 border-l-amber-400' : ''}`}
             >
               {/* Checkbox */}
@@ -54,7 +54,7 @@ export function StepList({ steps }: StepListProps) {
                   checked={isDone}
                   onChange={() => toggleChecked(step.id)}
                   aria-label={`Mark step ${step.index} as done`}
-                  className="h-5 w-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                  className="h-5 w-5 rounded border-mist-pale text-sage focus:ring-sage cursor-pointer"
                 />
               </div>
 
@@ -62,9 +62,9 @@ export function StepList({ steps }: StepListProps) {
                 <div className="flex items-start justify-between gap-2">
                   <label
                     htmlFor={`step-${step.id}`}
-                    className={`text-sm leading-relaxed cursor-pointer ${isDone ? 'line-through text-gray-400' : 'text-gray-800'}`}
+                    className={`text-sm leading-relaxed cursor-pointer ${isDone ? 'line-through text-forest/40' : 'text-forest'}`}
                   >
-                    <span className="font-semibold text-emerald-700 mr-1">
+                    <span className="font-semibold text-sage mr-1">
                       {step.index}.
                     </span>
                     {step.text}
@@ -72,7 +72,7 @@ export function StepList({ steps }: StepListProps) {
 
                   <div className="flex-shrink-0 flex items-center gap-2">
                     {step.timingMinutes != null && (
-                      <span className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                      <span className="rounded bg-surface px-2 py-0.5 text-xs text-forest/60">
                         {step.timingMinutes} min
                       </span>
                     )}
@@ -80,7 +80,7 @@ export function StepList({ steps }: StepListProps) {
                       <button
                         onClick={() => toggleAnnotations(step.id)}
                         aria-expanded={showAnnotations}
-                        className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700 hover:bg-blue-200 transition-colors"
+                        className="rounded bg-surface px-2 py-0.5 text-xs text-sage hover:bg-mist-pale transition-colors"
                       >
                         Tips
                       </button>
@@ -98,9 +98,9 @@ export function StepList({ steps }: StepListProps) {
                 {showAnnotations && step.annotations.map((ann, i) => (
                   <div
                     key={i}
-                    className="rounded bg-blue-50 border border-blue-200 px-3 py-2 text-xs text-gray-700"
+                    className="rounded bg-surface border border-mist px-3 py-2 text-xs text-forest"
                   >
-                    <span className="font-semibold capitalize text-blue-700">{ann.type}: </span>
+                    <span className="font-semibold capitalize text-sage">{ann.type}: </span>
                     {ann.text}
                   </div>
                 ))}

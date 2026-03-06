@@ -23,6 +23,7 @@
 
 | Category | Decision → Why | Tradeoff |
 | :---- | :---- | :---- |
+| **UX Design** | **"Simmer Coach" calm-voice branding** → Users with chronic or cognitive limitations are already managing stress; a warm, low-pressure coach tone reduces friction at the entry point and signals the app is built *for* them, not just *about* accessibility. | Softer brand voice may understate the AI complexity to judges; mitigated by the decision log and technical docs. |
 | **Tech Stack** | **\[Decision\]** → \[Reasoning\] | \[e.g., Higher cost, bundle size, or learning curve\] |
 | **Tech Stack** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
 | **Architecture** | **\[Decision\]** → \[Reasoning\] | \[e.g., Limited scalability or higher latency\] |

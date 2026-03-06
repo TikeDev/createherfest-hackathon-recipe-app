@@ -43,7 +43,7 @@ export function IngredientList({ ingredients }: IngredientListProps) {
   return (
     <section aria-labelledby="ingredients-heading">
       <div className="flex items-center justify-between mb-3">
-        <h2 id="ingredients-heading" className="text-lg font-semibold text-gray-900">
+        <h2 id="ingredients-heading" className="text-lg font-headline text-forest">
           Ingredients
         </h2>
 
@@ -56,8 +56,8 @@ export function IngredientList({ ingredients }: IngredientListProps) {
               aria-pressed={unitMode === mode}
               className={`px-2 py-1 rounded border transition-colors ${
                 unitMode === mode
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'border-gray-300 text-gray-600 hover:border-emerald-400'
+                  ? 'bg-sage text-white border-sage'
+                  : 'border-mist-pale text-forest/70 hover:border-sage'
               }`}
             >
               {mode === 'original' ? 'As written' : mode === 'metric' ? 'Grams' : 'No scale'}
@@ -68,7 +68,7 @@ export function IngredientList({ ingredients }: IngredientListProps) {
 
       <ul className="space-y-2">
         {ingredients.map((ingredient) => (
-          <li key={ingredient.id} className="text-sm text-gray-800">
+          <li key={ingredient.id} className="text-sm text-forest">
             <div className="flex items-start justify-between gap-2">
               <span>{formatUnit(ingredient, unitMode)}</span>
 
@@ -84,7 +84,7 @@ export function IngredientList({ ingredients }: IngredientListProps) {
             </div>
 
             {ingredient.units[0]?.explanation && (
-              <p className="mt-0.5 text-xs text-gray-500 italic">
+              <p className="mt-0.5 text-xs text-forest/60 italic">
                 {ingredient.units[0].explanation}
               </p>
             )}

@@ -12,18 +12,18 @@ export default function Extract() {
     return (
       <div className="max-w-xl mx-auto px-4 py-12 text-center space-y-4">
         <p className="text-2xl">✓</p>
-        <h1 className="text-xl font-semibold text-gray-900">{result.title}</h1>
-        <p className="text-sm text-gray-500">Recipe saved successfully.</p>
+        <h1 className="text-xl font-headline text-forest">{result.title}</h1>
+        <p className="text-sm text-forest/60">Nice work. That recipe is saved.</p>
         <div className="flex gap-3 justify-center">
           <button
             onClick={() => navigate(`/recipe/${result.id}`)}
-            className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+            className="rounded-lg bg-sage px-5 py-2.5 text-sm font-semibold text-white hover:bg-sage-dark focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2"
           >
             View Recipe
           </button>
           <button
             onClick={reset}
-            className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+            className="rounded-lg border border-mist-pale px-5 py-2.5 text-sm font-semibold text-forest hover:border-mist focus:outline-none focus:ring-2 focus:ring-mist focus:ring-offset-2"
           >
             Add Another
           </button>
@@ -35,8 +35,8 @@ export default function Extract() {
   return (
     <div className="max-w-xl mx-auto px-4 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Add a Recipe</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-headline text-forest">Add a Recipe</h1>
+        <p className="mt-1 text-sm text-forest/60">
           Import from a URL or paste recipe text. The AI will extract and structure it for you.
         </p>
       </div>
