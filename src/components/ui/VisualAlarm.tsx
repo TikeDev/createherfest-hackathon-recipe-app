@@ -59,11 +59,7 @@ export function VisualAlarm({ isActive, onDismiss }: VisualAlarmProps) {
             border: "2px solid #F59E0B",
           }}
         >
-          <Icon
-            icon={Bell}
-            className="w-16 h-16 mx-auto mb-4 animate-bounce"
-            style={{ color: "#D97706" }}
-          />
+          <Icon icon={Bell} className="w-16 h-16 mx-auto mb-4 animate-bounce text-amber-600" />
           <h2 className="text-2xl font-bold mb-2">Timer Complete!</h2>
           <p className="text-muted-foreground mb-4">Click anywhere or press any key to dismiss</p>
           <button
