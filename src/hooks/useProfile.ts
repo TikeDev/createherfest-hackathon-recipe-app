@@ -32,9 +32,8 @@ export function useProfile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [isDirty, setIsDirty] = useState(false);
   const statusTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     void getPrimaryProfile()
@@ -43,36 +42,30 @@ export function useProfile() {
   }, []);
 
   const update = useCallback((patch: Partial<UserProfile>) => {
+    setIsDirty(true);
     setProfile((prev) => (prev ? { ...prev, ...patch } : prev));
   }, []);
 
-  // Debounced auto-save
-  useEffect(() => {
-    if (!profile || loading) return;
-    if (isInitialLoad.current) {
-      isInitialLoad.current = false;
-      return;
-    }
+  const save = useCallback(async () => {
+    if (!profile) return;
+    setSaveStatus("saving");
+    await saveProfile(profile);
+    setSaveStatus("saved");
+    setIsDirty(false);
+    clearTimeout(statusTimeoutRef.current);
+    statusTimeoutRef.current = setTimeout(() => setSaveStatus("idle"), 2000);
+  }, [profile]);
 
-    clearTimeout(saveTimeoutRef.current);
-    saveTimeoutRef.current = setTimeout(async () => {
-      setSaveStatus("saving");
-      await saveProfile(profile);
-      setSaveStatus("saved");
-      clearTimeout(statusTimeoutRef.current);
-      statusTimeoutRef.current = setTimeout(() => setSaveStatus("idle"), 1500);
-    }, 800);
-
-    return () => clearTimeout(saveTimeoutRef.current);
-  }, [profile, loading]);
-
-  // Cleanup timers
-  useEffect(() => {
-    return () => {
-      clearTimeout(saveTimeoutRef.current);
-      clearTimeout(statusTimeoutRef.current);
-    };
+  const discard = useCallback(async () => {
+    const existing = await getPrimaryProfile();
+    setProfile(existing ?? createNewProfile());
+    setIsDirty(false);
+    setSaveStatus("idle");
   }, []);
 
-  return { profile, loading, saveStatus, update };
+  useEffect(() => {
+    return () => clearTimeout(statusTimeoutRef.current);
+  }, []);
+
+  return { profile, loading, saveStatus, isDirty, update, save, discard };
 }

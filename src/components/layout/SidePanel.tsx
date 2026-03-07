@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import {
   useViewPreferences,
   FONT_SIZE_MIN,
@@ -110,9 +110,15 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
       <div
         className={`flex items-center justify-between pt-5 pb-4 ${prefs.panelSide === "left" ? "pl-[4.5rem] pr-4" : "px-4"}`}
       >
-        <span id="side-panel-title" className="text-xl font-headline text-sage">
+        <Link
+          to="/"
+          id="side-panel-title"
+          className="flex items-center gap-2 mx-auto text-2xl font-headline text-sage no-underline"
+          onClick={isMobile ? onClose : undefined}
+        >
+          <img src="/simmer-logo-192.png" alt="" className="h-10 w-10" aria-hidden="true" />
           Simmer
-        </span>
+        </Link>
         {isMobile && (
           <Button
             ref={closeButtonRef}

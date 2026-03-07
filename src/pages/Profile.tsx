@@ -4,7 +4,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { handleRadioKeyDown } from "@/utils/a11y";
 import { Slider } from "@/components/ui/slider";
 import { ALARM_SOUNDS } from "@/constants/alarmSounds";
-import { ShieldAlert, Accessibility, ChefHat, Bell, Clock, ArrowLeft } from "lucide-react";
+import { ShieldAlert, Accessibility, ChefHat, Bell, Clock, ArrowLeft, Check } from "lucide-react";
 import { saveCustomAlarm, deleteCustomAlarm } from "@/storage/customAlarms";
 import {
   FDA_ALLERGENS,
@@ -230,7 +230,7 @@ function Section({
 // --- Main page ---
 
 export default function Profile() {
-  const { profile, loading, saveStatus, update } = useProfile();
+  const { profile, loading, saveStatus, isDirty, update, save, discard } = useProfile();
   const [uploadError, setUploadError] = useState<string>("");
 
   if (loading || !profile) {
@@ -285,14 +285,39 @@ export default function Profile() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-headline text-forest dark:text-cream-text">My Profile</h1>
         <div className="flex items-center gap-3">
-          <span
+          <button
+            type="button"
+            onClick={() => void discard()}
+            disabled={!isDirty}
+            aria-hidden={!isDirty}
+            tabIndex={isDirty ? 0 : -1}
+            className={`rounded-lg border border-mist-pale bg-surface px-3 py-1.5 text-xs font-medium text-forest/70 hover:border-mist hover:text-forest transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 dark:text-cream-text/70 dark:border-forest dark:hover:text-cream-text ${
+              isDirty ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            Discard
+          </button>
+          <button
+            type="button"
             role="status"
             aria-live="polite"
-            className="text-xs text-forest/50 dark:text-cream-text/50"
+            onClick={() => void save()}
+            disabled={!isDirty || saveStatus === "saving"}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold bg-sage text-white transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 ${
+              saveStatus === "saved" || isDirty
+                ? "opacity-100 hover:bg-sage-dark"
+                : "opacity-40 cursor-not-allowed"
+            }`}
           >
             {saveStatus === "saving" && "Saving..."}
-            {saveStatus === "saved" && "Saved"}
-          </span>
+            {saveStatus === "saved" && (
+              <>
+                <Check size={14} aria-hidden="true" />
+                Saved
+              </>
+            )}
+            {saveStatus === "idle" && "Save"}
+          </button>
           <Link
             to="/recipes"
             className="inline-flex items-center gap-1 rounded-lg bg-surface border border-mist-pale px-3 py-1.5 text-xs font-medium text-forest/70 hover:border-mist hover:text-forest transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 dark:text-cream-text/70 dark:border-forest dark:hover:text-cream-text"
@@ -304,8 +329,8 @@ export default function Profile() {
       </div>
 
       <p className="text-sm text-forest/60 dark:text-cream-text/60">
-        Your profile helps Simmer find recipes that work for your body and kitchen. Changes save
-        automatically.
+        Your profile helps Simmer find recipes that work for your body and kitchen. Press Save to
+        keep your changes.
       </p>
 
       {/* Section 1: Safety & Allergens */}
@@ -399,8 +424,8 @@ export default function Profile() {
         />
       </Section>
 
-      {/* Section 4: Timer Alarms */}
-      <Section title="Timer Alarms" icon={<Bell size={20} aria-hidden="true" />}>
+      {/* Section 4: Cooking Timer Alarms */}
+      <Section title="Cooking Timer Alarms" icon={<Bell size={20} aria-hidden="true" />}>
         {/* Alarm Sound Selection */}
         <fieldset className="space-y-2">
           <legend className="text-sm font-semibold text-forest dark:text-cream-text">
