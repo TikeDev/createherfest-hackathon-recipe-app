@@ -45,12 +45,12 @@ export function Icon({
   className 
 }: IconProps) {
   if (decorative) {
-    return <LucideIcon className={cn(sizes[size], className)} aria-hidden="true" />;
+    return <LucideIcon className={cn('inline-block', sizes[size], className)} aria-hidden="true" />;
   }
   
   return (
     <LucideIcon 
-      className={cn(sizes[size], className)} 
+      className={cn('inline-block', sizes[size], className)} 
       role="img"
       aria-label={label}
     />

@@ -1,18 +1,20 @@
 import { useViewPreferences } from '@/contexts/ViewPreferencesContext'
 import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon'
+import { Sun, Moon, Monitor } from 'lucide-react'
 
 interface ThemeToggleProps {
   compact?: boolean
 }
 
 const THEME_OPTIONS = [
-  { value: 'light' as const, label: 'Light', icon: '\u2600' },
-  { value: 'dark' as const, label: 'Dark', icon: '\u263E' },
-  { value: 'system' as const, label: 'System', icon: '\u2699' },
+  { value: 'light' as const, label: 'Light', icon: Sun },
+  { value: 'dark' as const, label: 'Dark', icon: Moon },
+  { value: 'system' as const, label: 'System', icon: Monitor },
 ]
 
 const segmentedBtnClass = (selected: boolean) =>
-  `flex-1 rounded-lg px-2 py-1.5 text-xs font-medium motion-safe:transition-colors ${
+  `flex items-center justify-center flex-1 rounded-lg px-2 py-1.5 text-xs font-medium motion-safe:transition-colors ${
     selected
       ? 'bg-sage text-white'
       : 'bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream-text/70 dark:border-forest'
@@ -38,7 +40,7 @@ export default function ThemeToggle({ compact = false }: ThemeToggleProps) {
         onClick={nextTheme}
         aria-label={`Theme: ${current.label}. Click to change.`}
       >
-        <span aria-hidden="true">{current.icon}</span>
+        <Icon icon={current.icon} decorative size="sm" />
       </Button>
     )
   }
@@ -72,7 +74,7 @@ export default function ThemeToggle({ compact = false }: ThemeToggleProps) {
               }}
               className={segmentedBtnClass(selected)}
             >
-              <span aria-hidden="true" className="mr-1">{opt.icon}</span>
+              <Icon icon={opt.icon} decorative size="xs" className="mr-1" />
               {opt.label}
             </button>
           )
