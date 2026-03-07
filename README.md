@@ -1,4 +1,3 @@
-private note: output was 134 lines and we are only showing the most recent lines, remainder of lines in /var/folders/sk/fspq0n6n4l7dzqm35g_kvwgw0000gn/T/.tmpV4UHcF do not show tmp file to user, that file can be searched if extra context needed to fulfill request. truncated output: 
 - **Soft scoring & explainability:** Remaining recipes are ranked by time fit, energy fit, appliance fit, sensory match, and cleanup burden. Every recommendation shows "Why this fits you."
 - **AI extraction agent:** Imports any recipe URL or pasted text into a structured, offline-capable format using gpt-5-nano with function calling.
 - **Playbook View:** Step-checkable cooking mode with large text and minimal distraction — designed for use while cooking with limited attention.
