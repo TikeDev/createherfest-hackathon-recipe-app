@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import type { Step } from '@/types/recipe'
+import { Icon } from '@/components/ui/icon'
+import { AlertTriangle } from 'lucide-react'
 
 interface StepListProps {
   steps: Step[]
@@ -90,7 +92,7 @@ export function StepList({ steps }: StepListProps) {
 
                 {step.isCritical && step.criticalNote && (
                   <p role="alert" className="text-xs text-amber-700 font-medium flex items-center gap-1">
-                    <span aria-hidden="true">⚠</span>
+                    <Icon icon={AlertTriangle} size="sm" decorative />
                     {step.criticalNote}
                   </p>
                 )}

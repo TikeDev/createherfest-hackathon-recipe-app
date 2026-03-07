@@ -1,4 +1,6 @@
 import type { ExtractionStatus, ExtractionProgress } from '@/types/agent'
+import { Icon } from '@/components/ui/icon'
+import { Check } from 'lucide-react'
 
 interface ExtractionProgressProps {
   status: ExtractionStatus
@@ -23,7 +25,7 @@ export function ExtractionProgressDisplay({ status, progress, error }: Extractio
       <ul className="space-y-2">
         {progress.completed.map((step) => (
           <li key={step} className="flex items-center gap-2 text-sm text-forest/60">
-            <span aria-hidden="true" className="text-sage">✓</span>
+            <Icon icon={Check} size="sm" decorative className="text-sage" />
             {step}
           </li>
         ))}

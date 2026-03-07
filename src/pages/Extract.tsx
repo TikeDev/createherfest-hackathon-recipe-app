@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import { RecipeInput } from '@/components/extraction/RecipeInput'
 import { ExtractionProgressDisplay } from '@/components/extraction/ExtractionProgress'
 import { useRecipeExtraction } from '@/hooks/useRecipeExtraction'
+import { Icon } from '@/components/ui/icon'
+import { CircleCheck } from 'lucide-react'
 
 export default function Extract() {
   const navigate = useNavigate()
@@ -11,7 +13,7 @@ export default function Extract() {
   if (status === 'done' && result) {
     return (
       <div className="max-w-xl mx-auto px-4 py-12 text-center space-y-4">
-        <p className="text-2xl">✓</p>
+        <Icon icon={CircleCheck} size="xl" label="Recipe saved successfully" className="text-sage" />
         <h1 className="text-xl font-headline text-forest">{result.title}</h1>
         <p className="text-sm text-forest/60">Nice work. That recipe is saved.</p>
         <div className="flex gap-3 justify-center">

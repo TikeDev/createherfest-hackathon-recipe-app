@@ -4,13 +4,16 @@ import { getAllRecipes } from '@/storage/recipes'
 import { useRecipeFilters } from '@/hooks/useRecipeFilters'
 import RecipeToolbar from '@/components/recipes/RecipeToolbar'
 import RecipeCard from '@/components/recipes/RecipeCard'
+import { Icon } from '@/components/ui/icon'
+import { Leaf, Sun, Zap } from 'lucide-react'
 import type { RecipeJSON } from '@/types/recipe'
 import type { EnergyLevel } from './Landing'
+import type { LucideIcon } from 'lucide-react'
 
-const ENERGY_LABELS: Record<EnergyLevel, string> = {
-  low:    '🌿 Low energy',
-  medium: '☀️ Medium energy',
-  high:   '⚡ Feeling good',
+const ENERGY_CONFIG: Record<EnergyLevel, { icon: LucideIcon; label: string; color: string }> = {
+  low:    { icon: Leaf, label: 'Low energy',   color: 'text-sage' },
+  medium: { icon: Sun,  label: 'Medium energy', color: 'text-amber-500' },
+  high:   { icon: Zap,  label: 'Feeling good',  color: 'text-orange-500' },
 }
 
 export default function Home() {
@@ -98,7 +101,8 @@ export default function Home() {
           <div className="flex flex-wrap items-center gap-2">
             {session?.energy && (
               <span className="rounded-full bg-surface border border-mist text-sage text-xs font-semibold px-3 py-1 dark:border-forest">
-                {ENERGY_LABELS[session.energy]}
+                <Icon icon={ENERGY_CONFIG[session.energy].icon} size="sm" decorative className={`inline mr-1 ${ENERGY_CONFIG[session.energy].color}`} />
+                {ENERGY_CONFIG[session.energy].label}
               </span>
             )}
             {session?.note && (

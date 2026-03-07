@@ -4,6 +4,15 @@ import { getRecipe } from '../storage/recipes'
 import type { RecipeJSON, Step, Ingredient, GroceryCategory } from '../types/recipe'
 import { classifyGroceries } from '../agent/classifyGroceries'
 import ThemeToggle from '../components/ui/ThemeToggle'
+import { Icon } from '@/components/ui/icon'
+import { 
+  ShoppingCart, Moon, Scissors, Flame, UtensilsCrossed, 
+  Beef, Milk, Package, Leaf, FlaskConical, Archive, Snowflake, 
+  Croissant, CupSoda, Box, Star, Check, X, Lightbulb, 
+  ChevronUp, ChevronDown, Timer, AlertTriangle, Salad, CircleCheckBig,
+  Play, Pause, RotateCcw
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 
 // ─── Brand tokens ────────────────────────────────────────────────
@@ -83,12 +92,21 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => (
 
 // ─── Stage bar ───────────────────────────────────────────────────
 type Stage = 'groceries' | 'preprep' | 'prep' | 'cook' | 'serve'
-const STAGES: { key: Stage; icon: string; label: string }[] = [
-    { key: 'groceries', icon: '🛒', label: 'Groceries' },
-    { key: 'preprep', icon: '🌙', label: 'Pre-Prep' },
-    { key: 'prep', icon: '🔪', label: 'Prep' },
-    { key: 'cook', icon: '🔥', label: 'Cook' },
-    { key: 'serve', icon: '🍽️', label: 'Serve' },
+
+const STAGE_ICONS: Record<Stage, LucideIcon> = {
+    groceries: ShoppingCart,
+    preprep: Moon,
+    prep: Scissors,
+    cook: Flame,
+    serve: UtensilsCrossed,
+}
+
+const STAGES: { key: Stage; label: string }[] = [
+    { key: 'groceries', label: 'Groceries' },
+    { key: 'preprep', label: 'Pre-Prep' },
+    { key: 'prep', label: 'Prep' },
+    { key: 'cook', label: 'Cook' },
+    { key: 'serve', label: 'Serve' },
 ]
 
 const StageBar = ({ current }: { current: Stage }) => {
@@ -104,7 +122,7 @@ const StageBar = ({ current }: { current: Stage }) => {
                             backgroundColor: i === currentIdx ? C.sage : i < currentIdx ? C.sageLight : C.mist,
                             border: i === currentIdx ? `2px solid ${C.sageDark}` : '2px solid transparent',
                             transition: 'all 0.25s',
-                        }}>{s.icon}</div>
+                        }}><Icon icon={STAGE_ICONS[s.key]} size="sm" decorative /></div>
                         <span style={{
                             fontSize: 13, fontWeight: i === currentIdx ? 800 : 500, whiteSpace: 'nowrap',
                             color: i === currentIdx ? C.sage : i < currentIdx ? C.sageLight : C.textLight
@@ -121,9 +139,9 @@ const StageBar = ({ current }: { current: Stage }) => {
 
 // ─── Step layout (shared for preprep/prep/cook) ──────────────────
 const StepLayout = ({
-    icon, title, stepLabel, stepContent, progressBar, sidebar,
+    icon: IconComponent, title, stepLabel, stepContent, progressBar, sidebar,
 }: {
-    icon: string; title: string; stepLabel: string
+    icon: LucideIcon; title: string; stepLabel: string
     stepContent: React.ReactNode; progressBar?: React.ReactNode; sidebar: React.ReactNode
 }) => (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 40 }}>
@@ -136,7 +154,9 @@ const StepLayout = ({
         </div>
         <div style={{ position: 'sticky', top: 130, alignSelf: 'start' }}>
             <Card style={{ textAlign: 'center', marginBottom: 16, padding: 36 }}>
-                <div style={{ fontSize: 60, marginBottom: 10 }}>{icon}</div>
+                <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'center' }}>
+                    <Icon icon={IconComponent} decorative className="text-sage w-14 h-14" />
+                </div>
                 <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Lora', serif", color: C.forest }}>{title}</div>
             </Card>
             {sidebar}
@@ -145,18 +165,18 @@ const StepLayout = ({
 )
 
 // ─── Groceries ───────────────────────────────────────────────────
-const CATEGORY_ICONS: Record<GroceryCategory, string> = {
-    'Produce': '🥦',
-    'Protein': '🥩',
-    'Dairy': '🧀',
-    'Pantry': '🫙',
-    'Spices & Seasonings': '🌿',
-    'Oils & Vinegars': '🫒',
-    'Canned & Jarred': '🥫',
-    'Frozen': '❄️',
-    'Bakery': '🍞',
-    'Beverages': '🥤',
-    'Other': '📦',
+const CATEGORY_ICONS: Record<GroceryCategory, LucideIcon> = {
+    'Produce': Salad,
+    'Protein': Beef,
+    'Dairy': Milk,
+    'Pantry': Package,
+    'Spices & Seasonings': Leaf,
+    'Oils & Vinegars': FlaskConical,
+    'Canned & Jarred': Archive,
+    'Frozen': Snowflake,
+    'Bakery': Croissant,
+    'Beverages': CupSoda,
+    'Other': Box,
 }
 
 function GroceriesStage({ recipe, onNext, onBack }: { recipe: RecipeJSON; onNext: () => void; onBack: () => void }) {
@@ -206,7 +226,7 @@ function GroceriesStage({ recipe, onNext, onBack }: { recipe: RecipeJSON; onNext
                 border: `2px solid ${checked[ing.id] ? C.sage : C.mist}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s',
             }}>
-                {checked[ing.id] && <span style={{ color: C.white, fontSize: 13 }}>✓</span>}
+                {checked[ing.id] && <Icon icon={Check} size="xs" decorative className="text-white" />}
             </div>
             <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, color: C.text, textDecoration: checked[ing.id] ? 'line-through' : 'none' }}>
@@ -241,7 +261,7 @@ function GroceriesStage({ recipe, onNext, onBack }: { recipe: RecipeJSON; onNext
                         {Array.from(grouped.entries()).map(([cat, ings]) => (
                             <div key={cat}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                                    <span style={{ fontSize: 16 }}>{CATEGORY_ICONS[cat]}</span>
+                                    <Icon icon={CATEGORY_ICONS[cat]} size="sm" decorative className="text-sage" />
                                     <span style={{ fontSize: 12, fontWeight: 800, color: C.textLight, textTransform: 'uppercase', letterSpacing: 1.5 }}>
                                         {cat}
                                     </span>
@@ -280,7 +300,7 @@ function GroceriesStage({ recipe, onNext, onBack }: { recipe: RecipeJSON; onNext
 function StepStage({
     icon, title, steps, onNext, onBack,
 }: {
-    icon: string; title: string; steps: Step[]; onNext: () => void; onBack: () => void
+    icon: LucideIcon; title: string; steps: Step[]; onNext: () => void; onBack: () => void
 }) {
     const [idx, setIdx] = useState(0)
     const [tipOpen, setTipOpen] = useState(false)
@@ -305,8 +325,8 @@ function StepStage({
                             {step.text}
                         </p>
                         {step.isCritical && step.criticalNote && (
-                            <div style={{ marginTop: 16, backgroundColor: '#FEF6E7', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#92600A' }}>
-                                ⚠️ {step.criticalNote}
+                            <div style={{ marginTop: 16, backgroundColor: '#FEF6E7', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#92600A', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                                <Icon icon={AlertTriangle} size="sm" decorative className="flex-shrink-0 mt-0.5" /> {step.criticalNote}
                             </div>
                         )}
                     </Card>
@@ -318,8 +338,9 @@ function StepStage({
                                 fontWeight: 700, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
                                 display: 'flex', alignItems: 'center', gap: 8,
                             }}>
-                                <span>💡 What does this mean?</span>
-                                <span>{tipOpen ? '▲' : '▼'}</span>
+                                <Icon icon={Lightbulb} size="sm" decorative />
+                                <span>What does this mean?</span>
+                                <Icon icon={tipOpen ? ChevronUp : ChevronDown} size="sm" decorative />
                             </button>
                             {tipOpen && (
                                 <div style={{ backgroundColor: C.sagePale, borderRadius: '0 0 10px 10px', padding: '14px 18px', fontSize: 14, color: C.forest, lineHeight: 1.8, border: `1px solid ${C.mist}`, borderTop: 'none' }}>
@@ -401,14 +422,16 @@ function CircularTimer({ timeLeft, totalSeconds, paused, done, onPause, onUnpaus
             <div style={{ display: 'flex', gap: 10 }}>
                 {!done && (
                     paused
-                        ? <button onClick={onUnpause} style={timerBtnStyle(C.sage, C.white)}>▶ Resume</button>
-                        : <button onClick={onPause} style={timerBtnStyle('transparent', C.sage, C.sage)}>⏸ Pause</button>
+                        ? <button onClick={onUnpause} style={{...timerBtnStyle(C.sage, C.white), display: 'flex', alignItems: 'center', gap: 6}}><Icon icon={Play} size="sm" decorative /> Resume</button>
+                        : <button onClick={onPause} style={{...timerBtnStyle('transparent', C.sage, C.sage), display: 'flex', alignItems: 'center', gap: 6}}><Icon icon={Pause} size="sm" decorative /> Pause</button>
                 )}
-                <button onClick={onRestart} style={timerBtnStyle('transparent', C.textMuted, C.mist)}>↺ Restart</button>
+                <button onClick={onRestart} style={{...timerBtnStyle('transparent', C.textMuted, C.mist), display: 'flex', alignItems: 'center', gap: 6}}><Icon icon={RotateCcw} size="sm" decorative /> Restart</button>
             </div>
 
             {done && (
-                <div style={{ fontSize: 13, fontWeight: 700, color: C.sage }}>✅ Timer done — ready for the next step</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: C.sage, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Icon icon={CircleCheckBig} size="sm" decorative /> Timer done — ready for the next step
+                </div>
             )}
         </Card>
     )
@@ -500,7 +523,7 @@ function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => voi
 
     return (
         <StepLayout
-            icon="🔥" title="Cook"
+            icon={Flame} title="Cook"
             stepLabel={`Step ${idx + 1} of ${steps.length}`}
             stepContent={
                 <div>
@@ -517,7 +540,7 @@ function CookStage({ steps, onNext, onBack }: { steps: Step[]; onNext: () => voi
                             fontWeight: 700, cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
                             display: 'flex', alignItems: 'center', gap: 10,
                         }}>
-                            <span style={{ fontSize: 20 }}>⏱</span> Start Timer · {fmt(timerSeconds)}
+                            <Icon icon={Timer} size="md" decorative /> Start Timer · {fmt(timerSeconds)}
                         </button>
                     )}
 
@@ -566,7 +589,9 @@ function ServeStage({ recipe, onComplete, onBack }: { recipe: RecipeJSON; onComp
 
     return (
         <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center', paddingTop: 48 }}>
-            <div style={{ fontSize: 88, marginBottom: 20 }}>🍽️</div>
+            <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'center' }}>
+                <Icon icon={UtensilsCrossed} decorative className="text-sage w-20 h-20" />
+            </div>
             <h2 style={{ fontSize: 38, fontFamily: "'Lora', serif", fontWeight: 700, color: C.forest, margin: '0 0 10px', lineHeight: 1.3 }}>
                 You made it.<br />Time to eat.
             </h2>
@@ -583,7 +608,7 @@ function ServeStage({ recipe, onComplete, onBack }: { recipe: RecipeJSON; onComp
                                 backgroundColor: rating >= n ? C.sage : C.mist,
                                 cursor: 'pointer', fontSize: 22, transition: 'all 0.15s',
                                 transform: rating === n ? 'scale(1.15)' : 'scale(1)',
-                            }}>⭐</button>
+                            }}><Icon icon={Star} size="md" decorative className={rating >= n ? 'text-white' : 'text-sage'} /></button>
                         ))}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: C.textLight, padding: '0 4px', marginBottom: 24 }}>
@@ -592,8 +617,8 @@ function ServeStage({ recipe, onComplete, onBack }: { recipe: RecipeJSON; onComp
                     <Btn onClick={() => setSubmitted(true)} disabled={rating === 0}>Rate it →</Btn>
                 </Card>
             ) : (
-                <Card style={{ marginBottom: 28, backgroundColor: C.sagePale }}>
-                    <div style={{ fontSize: 36, marginBottom: 8 }}>🌿</div>
+                <Card style={{ marginBottom: 28, backgroundColor: C.sagePale, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Icon icon={Leaf} size="lg" decorative className="text-sage mb-2" />
                     <div style={{ fontSize: 16, fontWeight: 700, color: C.sage }}>Thanks — rating saved</div>
                 </Card>
             )}
@@ -624,9 +649,9 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
     const stageContent: Record<Stage, React.ReactNode> = {
         groceries: <GroceriesStage recipe={recipe} onNext={() => setStage('preprep')} onBack={onBack} />,
         preprep: prePrepSteps.length > 0
-            ? <StepStage icon="🌙" title="Pre-Prep" steps={prePrepSteps} onNext={() => setStage('prep')} onBack={() => setStage('groceries')} />
+            ? <StepStage icon={Moon} title="Pre-Prep" steps={prePrepSteps} onNext={() => setStage('prep')} onBack={() => setStage('groceries')} />
             : null,
-        prep: <StepStage icon="🔪" title="Prep" steps={prepSteps} onNext={() => setStage('cook')} onBack={() => setStage(prePrepSteps.length > 0 ? 'preprep' : 'groceries')} />,
+        prep: <StepStage icon={Scissors} title="Prep" steps={prepSteps} onNext={() => setStage('cook')} onBack={() => setStage(prePrepSteps.length > 0 ? 'preprep' : 'groceries')} />,
         cook: <CookStage steps={cookSteps} onNext={() => setStage('serve')} onBack={() => setStage('prep')} />,
         serve: <ServeStage recipe={recipe} onComplete={onComplete} onBack={() => setStage('cook')} />,
     }
@@ -644,13 +669,13 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
             {/* Nav */}
             <nav aria-label="Cooking mode" style={{ backgroundColor: C.white, borderBottom: `1px solid ${C.mist}`, padding: '0 48px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 1px 8px rgba(45,59,53,0.06)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 22 }}>🌿</span>
+                    <Icon icon={Leaf} size="lg" decorative className="text-sage" />
                     <span style={{ fontSize: 20, fontWeight: 900, color: C.forest, fontFamily: "'Lora', Georgia, serif" }}>Simmer</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <ThemeToggle compact />
-                    <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.sage, fontSize: 14, fontWeight: 700, fontFamily: "'Nunito', sans-serif" }}>
-                        ✕ Exit cooking mode
+                    <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', color: C.sage, fontSize: 14, fontWeight: 700, fontFamily: "'Nunito', sans-serif", display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Icon icon={X} size="sm" decorative /> Exit cooking mode
                     </button>
                 </div>
             </nav>

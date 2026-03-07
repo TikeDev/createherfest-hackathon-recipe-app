@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Icon } from '@/components/ui/icon'
+import { Leaf, Sun, Zap } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 const PLACEHOLDERS = [
   'tired but craving something warm and spicy...',
@@ -10,10 +13,10 @@ const PLACEHOLDERS = [
 
 export type EnergyLevel = 'low' | 'medium' | 'high'
 
-const ENERGY_OPTIONS: { value: EnergyLevel; emoji: string; label: string }[] = [
-  { value: 'low',    emoji: '🌿', label: 'Low energy' },
-  { value: 'medium', emoji: '☀️', label: 'Medium' },
-  { value: 'high',   emoji: '⚡', label: 'Feeling good' },
+const ENERGY_OPTIONS: { value: EnergyLevel; icon: LucideIcon; label: string; color: string }[] = [
+  { value: 'low',    icon: Leaf, label: 'Low energy',   color: 'text-sage' },
+  { value: 'medium', icon: Sun,  label: 'Medium',       color: 'text-amber-500' },
+  { value: 'high',   icon: Zap,  label: 'Feeling good', color: 'text-orange-500' },
 ]
 
 export default function Landing() {
@@ -79,7 +82,7 @@ export default function Landing() {
                         : 'border-mist-pale bg-surface text-forest/60 hover:border-mist hover:text-forest dark:text-cream-text/60 dark:border-forest dark:hover:border-mist dark:hover:text-cream'
                     }`}
                   >
-                    <span className="text-xl" aria-hidden="true">{opt.emoji}</span>
+                    <Icon icon={opt.icon} size="lg" decorative className={opt.color} />
                     <span>{opt.label}</span>
                   </button>
                 )
