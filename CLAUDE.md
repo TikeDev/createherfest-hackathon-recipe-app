@@ -26,6 +26,23 @@ pnpm preview       # Preview production build locally
 pnpm lint          # ESLint
 ```
 
+## Icons
+
+**Default to [Lucide React](https://lucide.dev/guide/packages/lucide-react) for all icons.** Lucide provides accessible, consistent, and lightweight SVG icons with built-in React components.
+
+```tsx
+import { Heart, Search, Menu } from 'lucide-react';
+
+// Icons inherit currentColor and accept size prop
+<Heart className="text-red-500" size={24} />
+```
+
+**Why Lucide:**
+- Accessible by default (proper SVG structure, aria-hidden when decorative)
+- Tree-shakeable — only imports icons you use
+- Consistent 24×24 grid, 2px stroke
+- Works seamlessly with Tailwind for color/size
+
 ## Architecture
 
 ### Core User Flow
