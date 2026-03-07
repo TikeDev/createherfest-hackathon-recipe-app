@@ -4,17 +4,21 @@
 
 @layer base {
   body {
-    background-color: #FAF4EF;
-    font-family: 'Nunito', sans-serif;
-    color: #2D3B35;
+    background-color: #faf4ef;
+    font-family: Nunito, sans-serif;
+    color: #2d3b35;
   }
 
   /* Font family overrides */
   html[data-font-family="opendyslexic"] body {
-    font-family: 'Open Dyslexic', 'OpenDyslexic', sans-serif;
+    font-family: "Open Dyslexic", OpenDyslexic, sans-serif;
   }
+
   html[data-font-family="system"] body {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
   }
 
   /* Dark mode */
@@ -28,6 +32,7 @@
     background-color: #fff;
     color: #000;
   }
+
   html[data-contrast="high"][data-theme="dark"] body {
     background-color: #000;
     color: #fff;
@@ -35,13 +40,14 @@
 
   /* Color blind mode — override brand colors via CSS custom properties */
   :root {
-    --color-sage: #6B9E78;
+    --color-sage: #6b9e78;
     --color-sage-dark: #4e7a5a;
-    --color-mist: #A8C5B0;
-    --color-mist-pale: #D4E6DA;
-    --color-forest: #2D3B35;
-    --color-cream: #FAF4EF;
-    --color-surface: #EEF5F0;
+    --color-mist: #a8c5b0;
+    --color-mist-pale: #d4e6da;
+    --color-forest: #2d3b35;
+    --color-cream: #faf4ef;
+    --color-surface: #eef5f0;
+
     /* shadcn semantic tokens — mapped to Simmer's palette */
     --background: var(--color-cream);
     --foreground: var(--color-forest);
@@ -50,14 +56,14 @@
     --popover: var(--color-cream);
     --popover-foreground: var(--color-forest);
     --primary: var(--color-sage);
-    --primary-foreground: #ffffff;
+    --primary-foreground: #fff;
     --secondary: var(--color-surface);
     --secondary-foreground: var(--color-forest);
     --muted: var(--color-surface);
     --muted-foreground: color-mix(in srgb, var(--color-forest) 60%, transparent);
     --accent: var(--color-mist-pale);
     --accent-foreground: var(--color-forest);
-    --destructive: #dc2626;
+    --destructive: #e57373;
     --border: var(--color-mist-pale);
     --input: var(--color-mist-pale);
     --ring: var(--color-sage);
@@ -65,16 +71,17 @@
   }
 
   html[data-colorblind="red-green"] {
-    --color-sage: #0077BB;
-    --color-sage-dark: #005588;
-    --color-mist: #88CCEE;
-    --color-mist-pale: #CCEEFF;
+    --color-sage: #07b;
+    --color-sage-dark: #058;
+    --color-mist: #8ce;
+    --color-mist-pale: #cef;
   }
+
   html[data-colorblind="blue-yellow"] {
-    --color-sage: #CC6677;
-    --color-sage-dark: #993344;
-    --color-mist: #DDAA77;
-    --color-mist-pale: #EEDDBB;
+    --color-sage: #c67;
+    --color-sage-dark: #934;
+    --color-mist: #da7;
+    --color-mist-pale: #edb;
   }
 
   /* Dark mode color adjustments */
@@ -82,20 +89,10 @@
     --color-forest: #e8f0eb;
     --color-cream: #1a2420;
     --color-surface: #1e2d28;
-    /* Stable token for light text in dark mode — never remapped */
-    --color-cream-text: #FAF4EF;
-  }
 
-  /* Reduced motion — disable all inline transitions globally */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      transition-duration: 0.01ms !important;
-      animation-duration: 0.01ms !important;
-      transition-delay: 0ms !important;
-      animation-delay: 0ms !important;
-    }
-  }
-  html[data-theme="dark"] {
+    /* Stable token for light text in dark mode — never remapped */
+    --color-cream-text: #faf4ef;
+
     /* shadcn semantic tokens — dark overrides using Simmer dark palette */
     --background: var(--color-cream);
     --foreground: var(--color-forest);
@@ -104,7 +101,7 @@
     --popover: var(--color-cream);
     --popover-foreground: var(--color-forest);
     --primary: var(--color-sage);
-    --primary-foreground: #ffffff;
+    --primary-foreground: #fff;
     --secondary: var(--color-surface);
     --secondary-foreground: var(--color-forest);
     --muted: var(--color-surface);
@@ -117,6 +114,19 @@
     --input: color-mix(in srgb, var(--color-forest) 40%, transparent);
     --ring: var(--color-sage);
   }
+
+  /* Reduced motion — disable all inline transitions globally */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+      animation-delay: 0ms !important;
+    }
+  }
+
   * {
     border-color: var(--border);
     outline-color: var(--ring);
