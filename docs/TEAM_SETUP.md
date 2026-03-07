@@ -1,6 +1,7 @@
 # Team Setup Guide
 
 ## Table of Contents
+- [⚡ RTK (Token Optimizer)](#-rtk-token-optimizer)
 - [♿ Accessibility Agents (manual invocation)](#-accessibility-agents-manual-invocation)
 - [How to use accessibility agents](#how-to-use-accessibility-agents)
 - [Tips from using the agents](#tips-from-using-the-agents)
@@ -10,6 +11,20 @@
 - [🔍 Chrome DevTools MCP](#-chrome-devtools-mcp)
 - [Option A: Chrome Beta (Mac/Windows)](#option-a-chrome-beta-macwindows)
 - [Option B: Brave on Windows (untested)](#option-b-brave-on-windows-untested)
+
+---
+
+## ⚡ RTK (Token Optimizer)
+
+RTK strips noise from dev command output before it reaches Claude Code — **60–90% fewer tokens** on git, build, test, and package manager commands. Install it per machine.
+
+1. **Install** — see [github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk) for the latest method
+2. **Wire the hook** — `rtk init --global` (works across all your projects)
+3. **Verify** — `rtk --version` and `rtk gain` should both work
+
+After that, Claude Code uses RTK automatically. You can also prefix commands manually: `rtk git status`, `rtk tsc`, etc.
+
+> **macOS:** If `rtk gain` fails, you may have a different `rtk` binary on your PATH. Run `which rtk` to confirm.
 
 ---
 

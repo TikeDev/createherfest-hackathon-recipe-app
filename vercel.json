@@ -1,4 +1,5 @@
 {
   "buildCommand": "pnpm build",
-  "devCommand": "vite --port $PORT --host ::1"
+  "devCommand": "pnpm dev",
+  "framework": "vite"
 }

@@ -7,6 +7,9 @@ import { classifyGroceries } from "../agent/classifyGroceries";
 import ThemeToggle from "../components/ui/ThemeToggle";
 import { Icon } from "@/components/ui/icon";
 import { useViewPreferences } from "@/contexts/ViewPreferencesContext";
+import { useProfile } from "@/hooks/useProfile";
+import { playAlarm, stopAlarm } from "@/utils/alarm";
+import { VisualAlarm } from "@/components/ui/VisualAlarm";
 import {
   ShoppingCart,
   Moon,
@@ -37,6 +40,7 @@ import {
   Pause,
   RotateCcw,
   Loader2,
+  BellOff,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -766,6 +770,8 @@ function CircularTimer({
   onPause,
   onUnpause,
   onRestart,
+  onDismissAlarm,
+  alarmPlaying,
 }: {
   timeLeft: number;
   totalSeconds: number;
@@ -774,6 +780,8 @@ function CircularTimer({
   onPause: () => void;
   onUnpause: () => void;
   onRestart: () => void;
+  onDismissAlarm?: () => void;
+  alarmPlaying?: boolean;
 }) {
   const pct = totalSeconds > 0 ? timeLeft / totalSeconds : 0;
   const offset = CIRCUMFERENCE * (1 - pct);
@@ -896,17 +904,33 @@ function CircularTimer({
       </div>
 
       {done && (
-        <div
-          style={{
-            fontSize: 13,
-            fontWeight: 700,
-            color: "var(--color-sage)",
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-          }}
-        >
-          <Icon icon={CircleCheckBig} size="sm" decorative /> Timer done — ready for the next step
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 700,
+              color: "var(--color-sage)",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
+            <Icon icon={CircleCheckBig} size="sm" decorative /> Timer done — ready for the next step
+          </div>
+          {alarmPlaying && onDismissAlarm && (
+            <button
+              onClick={onDismissAlarm}
+              style={{
+                ...timerBtnStyle("var(--color-sage)", "white"),
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+              }}
+            >
+              <Icon icon={BellOff} size="sm" decorative /> Dismiss Alarm
+            </button>
+          )}
         </div>
       )}
     </Card>
@@ -940,7 +964,10 @@ function CookStage({
   const [timerPaused, setTimerPaused] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [timerDone, setTimerDone] = useState(false);
+  const [alarmAudio, setAlarmAudio] = useState<HTMLAudioElement | null>(null);
+  const [showVisualAlarm, setShowVisualAlarm] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { profile } = useProfile();
   const step = steps[idx];
   const isLast = idx === steps.length - 1;
   const timerSeconds = step?.timingMinutes ? Math.round(step.timingMinutes * 60) : null;
@@ -957,6 +984,15 @@ function CookStage({
           clearTimer();
           setTimerActive(false);
           setTimerDone(true);
+          // Trigger alarm when timer completes
+          if (profile?.alarmEnabled) {
+            void playAlarm(profile).then((audio) => {
+              setAlarmAudio(audio);
+            });
+            if (profile.visualAlarmEnabled) {
+              setShowVisualAlarm(true);
+            }
+          }
           return 0;
         }
         return t - 1;
@@ -988,12 +1024,19 @@ function CookStage({
     if (timerSeconds) startTimer(timerSeconds);
   };
 
+  const dismissAlarm = () => {
+    stopAlarm(alarmAudio);
+    setAlarmAudio(null);
+    setShowVisualAlarm(false);
+  };
+
   const resetTimerState = () => {
     clearTimer();
     setTimerActive(false);
     setTimerPaused(false);
     setTimerDone(false);
     setTimeLeft(null);
+    dismissAlarm();
   };
 
   // Reset timer when step changes
@@ -1010,124 +1053,130 @@ function CookStage({
   if (!step) return null;
 
   return (
-    <StepLayout
-      icon={Flame}
-      title="Cook"
-      stepLabel={`Step ${idx + 1} of ${steps.length}`}
-      stepContent={
-        <div>
-          <Card style={{ padding: 44, marginBottom: 16 }}>
-            <p
-              style={{
-                fontSize: 22,
-                lineHeight: 1.9,
-                color: "var(--foreground)",
-                fontFamily: "'Lora', serif",
-                margin: 0,
-              }}
-            >
-              {step.text}
-            </p>
-          </Card>
-
-          {timerSeconds && !timerStarted && (
-            <button
-              onClick={() => startTimer(timerSeconds)}
-              style={{
-                backgroundColor: "var(--accent)",
-                border: "1.5px solid var(--color-mist)",
-                borderRadius: 12,
-                padding: "15px 24px",
-                fontSize: 14,
-                color: "var(--color-sage)",
-                fontWeight: 700,
-                cursor: "pointer",
-                fontFamily: "'Nunito', sans-serif",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <Icon icon={Timer} size="md" decorative /> Start Timer · {fmt(timerSeconds)}
-            </button>
-          )}
-
-          {timerStarted && timeLeft !== null && timerSeconds && (
-            <CircularTimer
-              timeLeft={timeLeft}
-              totalSeconds={timerSeconds}
-              paused={timerPaused}
-              done={timerDone}
-              onPause={pauseTimer}
-              onUnpause={unpauseTimer}
-              onRestart={restartTimer}
-            />
-          )}
-
-          <div
-            role="group"
-            aria-label={`Step ${idx + 1} of ${steps.length}`}
-            style={{ display: "flex", gap: 8, marginTop: 20 }}
-          >
-            {steps.map((_, i) => (
-              <div
-                key={i}
-                aria-hidden="true"
+    <>
+      <StepLayout
+        icon={Flame}
+        title="Cook"
+        stepLabel={`Step ${idx + 1} of ${steps.length}`}
+        stepContent={
+          <div>
+            <Card style={{ padding: 44, marginBottom: 16 }}>
+              <p
                 style={{
-                  height: 4,
-                  flex: 1,
-                  borderRadius: 2,
-                  backgroundColor: i <= idx ? "var(--color-sage)" : "var(--color-mist-pale)",
+                  fontSize: 22,
+                  lineHeight: 1.9,
+                  color: "var(--foreground)",
+                  fontFamily: "'Lora', serif",
+                  margin: 0,
                 }}
+              >
+                {step.text}
+              </p>
+            </Card>
+
+            {timerSeconds && !timerStarted && (
+              <button
+                onClick={() => startTimer(timerSeconds)}
+                style={{
+                  backgroundColor: "var(--accent)",
+                  border: "1.5px solid var(--color-mist)",
+                  borderRadius: 12,
+                  padding: "15px 24px",
+                  fontSize: 14,
+                  color: "var(--color-sage)",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  fontFamily: "'Nunito', sans-serif",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <Icon icon={Timer} size="md" decorative /> Start Timer · {fmt(timerSeconds)}
+              </button>
+            )}
+
+            {timerStarted && timeLeft !== null && timerSeconds && (
+              <CircularTimer
+                timeLeft={timeLeft}
+                totalSeconds={timerSeconds}
+                paused={timerPaused}
+                done={timerDone}
+                onPause={pauseTimer}
+                onUnpause={unpauseTimer}
+                onRestart={restartTimer}
+                onDismissAlarm={dismissAlarm}
+                alarmPlaying={alarmAudio !== null || showVisualAlarm}
               />
-            ))}
-            <span
-              style={{
-                position: "absolute",
-                width: 1,
-                height: 1,
-                overflow: "hidden",
-                clip: "rect(0,0,0,0)",
-                whiteSpace: "nowrap",
-              }}
+            )}
+
+            <div
+              role="group"
+              aria-label={`Step ${idx + 1} of ${steps.length}`}
+              style={{ display: "flex", gap: 8, marginTop: 20 }}
             >
-              Step {idx + 1} of {steps.length}
-            </span>
+              {steps.map((_, i) => (
+                <div
+                  key={i}
+                  aria-hidden="true"
+                  style={{
+                    height: 4,
+                    flex: 1,
+                    borderRadius: 2,
+                    backgroundColor: i <= idx ? "var(--color-sage)" : "var(--color-mist-pale)",
+                  }}
+                />
+              ))}
+              <span
+                style={{
+                  position: "absolute",
+                  width: 1,
+                  height: 1,
+                  overflow: "hidden",
+                  clip: "rect(0,0,0,0)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Step {idx + 1} of {steps.length}
+              </span>
+            </div>
           </div>
-        </div>
-      }
-      sidebar={
-        <>
-          <Btn
-            onClick={() => {
-              resetTimerState();
-              if (isLast) {
-                onNext();
-              } else {
-                setIdx((i) => i + 1);
-              }
-            }}
-          >
-            {isLast ? "Done · Next stage →" : "Done · Next step →"}
-          </Btn>
-          <div style={{ marginTop: 10 }}>
+        }
+        sidebar={
+          <>
             <Btn
-              variant="secondary"
               onClick={() => {
                 resetTimerState();
-                if (idx > 0) {
-                  setIdx((i) => i - 1);
+                if (isLast) {
+                  onNext();
                 } else {
-                  onBack();
+                  setIdx((i) => i + 1);
                 }
               }}
             >
-              ← Back
+              {isLast ? "Done · Next stage →" : "Done · Next step →"}
             </Btn>
-          </div>
-        </>
-      }
-    />
+            <div style={{ marginTop: 10 }}>
+              <Btn
+                variant="secondary"
+                onClick={() => {
+                  resetTimerState();
+                  if (idx > 0) {
+                    setIdx((i) => i - 1);
+                  } else {
+                    onBack();
+                  }
+                }}
+              >
+                ← Back
+              </Btn>
+            </div>
+          </>
+        }
+      />
+      {/* Visual alarm overlay */}
+      <VisualAlarm isActive={showVisualAlarm} onDismiss={dismissAlarm} />
+    </>
   );
 }
 

@@ -1,110 +1,118 @@
-import { useEffect, useState, useRef } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useViewPreferences, FONT_SIZE_MIN, FONT_SIZE_MAX } from '@/contexts/ViewPreferencesContext'
-import { getAllRecipes } from '@/storage/recipes'
-import ThemeToggle from '@/components/ui/ThemeToggle'
-import { handleRadioKeyDown } from '@/utils/a11y'
-import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
-import { Separator } from '@/components/ui/separator'
+import { useEffect, useState, useRef } from "react";
+import { NavLink } from "react-router-dom";
+import {
+  useViewPreferences,
+  FONT_SIZE_MIN,
+  FONT_SIZE_MAX,
+} from "@/contexts/ViewPreferencesContext";
+import { getAllRecipes } from "@/storage/recipes";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import { handleRadioKeyDown } from "@/utils/a11y";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 
 interface SidePanelProps {
-  isOpen: boolean
-  onClose: () => void
-  isMobile: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  isMobile: boolean;
 }
 
 const FONT_FAMILY_OPTIONS = [
-  { value: 'nunito' as const, label: 'Nunito' },
-  { value: 'opendyslexic' as const, label: 'OpenDyslexic' },
-  { value: 'system' as const, label: 'System' },
-]
+  { value: "nunito" as const, label: "Nunito" },
+  { value: "opendyslexic" as const, label: "OpenDyslexic" },
+  { value: "system" as const, label: "System" },
+];
 
 const COLORBLIND_OPTIONS = [
-  { value: 'off' as const, label: 'Off' },
-  { value: 'red-green' as const, label: 'Red-Green' },
-  { value: 'blue-yellow' as const, label: 'Blue-Yellow' },
-]
+  { value: "off" as const, label: "Off" },
+  { value: "red-green" as const, label: "Red-Green" },
+  { value: "blue-yellow" as const, label: "Blue-Yellow" },
+];
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium motion-safe:transition-colors ${
     isActive
-      ? 'bg-sage/10 text-sage dark:text-sage'
-      : 'text-forest/70 hover:bg-surface hover:text-forest dark:text-cream-text/70 dark:hover:bg-forest/50 dark:hover:text-cream'
-  }`
+      ? "bg-sage/10 text-sage dark:text-sage"
+      : "text-forest/70 hover:bg-surface hover:text-forest dark:text-cream-text/70 dark:hover:bg-forest/50 dark:hover:text-cream"
+  }`;
 
 const segmentedBtnClass = (selected: boolean) =>
   `flex-1 rounded-lg px-2 py-1.5 text-xs font-medium motion-safe:transition-colors ${
     selected
-      ? 'bg-sage text-white'
-      : 'bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream-text/70 dark:border-forest'
-  }`
+      ? "bg-sage text-white"
+      : "bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream-text/70 dark:border-forest"
+  }`;
 
 export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps) {
-  const { prefs, updatePrefs } = useViewPreferences()
-  const [recipeCount, setRecipeCount] = useState(0)
-  const panelRef = useRef<HTMLDivElement>(null)
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const { prefs, updatePrefs } = useViewPreferences();
+  const [recipeCount, setRecipeCount] = useState(0);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   // Load recipe count
   useEffect(() => {
-    getAllRecipes().then((all) => setRecipeCount(all.length))
-  }, [isOpen])
+    void getAllRecipes().then((all) => setRecipeCount(all.length));
+  }, [isOpen]);
 
   // Focus trap for mobile overlay
   useEffect(() => {
-    if (!isMobile || !isOpen) return
+    if (!isMobile || !isOpen) return;
 
     // Focus close button on open
-    closeButtonRef.current?.focus()
+    closeButtonRef.current?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose()
-        return
+      if (e.key === "Escape") {
+        onClose();
+        return;
       }
 
-      if (e.key !== 'Tab') return
+      if (e.key !== "Tab") return;
 
-      const panel = panelRef.current
-      if (!panel) return
+      const panel = panelRef.current;
+      if (!panel) return;
 
       const focusable = panel.querySelectorAll<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-      if (focusable.length === 0) return
+      );
+      if (focusable.length === 0) return;
 
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
 
       if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault()
-        last.focus()
+        e.preventDefault();
+        last.focus();
       } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault()
-        first.focus()
+        e.preventDefault();
+        first.focus();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isMobile, isOpen, onClose])
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isMobile, isOpen, onClose]);
 
   const panelContent = (
     <div
       ref={panelRef}
       id="side-panel"
-      role={isMobile ? 'dialog' : 'region'}
+      role={isMobile ? "dialog" : "region"}
       aria-modal={isMobile ? true : undefined}
-      aria-labelledby={isMobile ? 'side-panel-title' : undefined}
-      aria-label={isMobile ? undefined : 'Settings sidebar'}
+      aria-labelledby={isMobile ? "side-panel-title" : undefined}
+      aria-label={isMobile ? undefined : "Settings sidebar"}
       className={`flex h-full w-72 flex-col bg-cream border-mist-pale overflow-y-auto dark:border-forest ${
-        prefs.panelSide === 'left' ? 'border-r' : 'border-l'
+        prefs.panelSide === "left" ? "border-r" : "border-l"
       }`}
     >
       {/* Header — extra left padding when panel is left to clear the fixed hamburger button */}
-      <div className={`flex items-center justify-between pt-5 pb-4 ${prefs.panelSide === 'left' ? 'pl-[4.5rem] pr-4' : 'px-4'}`}>
-        <span id="side-panel-title" className="text-xl font-headline text-sage">Simmer</span>
+      <div
+        className={`flex items-center justify-between pt-5 pb-4 ${prefs.panelSide === "left" ? "pl-[4.5rem] pr-4" : "px-4"}`}
+      >
+        <span id="side-panel-title" className="text-xl font-headline text-sage">
+          Simmer
+        </span>
         {isMobile && (
           <Button
             ref={closeButtonRef}
@@ -114,7 +122,9 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
             onClick={onClose}
             aria-label="Close menu"
           >
-            <span aria-hidden="true" className="text-lg">&times;</span>
+            <span aria-hidden="true" className="text-lg">
+              &times;
+            </span>
           </Button>
         )}
       </div>
@@ -132,7 +142,10 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
         <NavLink to="/recipes" className={navLinkClass} onClick={isMobile ? onClose : undefined}>
           <span aria-hidden="true">&#x1F4D6;</span>
           <span className="flex-1">Saved Recipes</span>
-          <span className="rounded-full bg-sage/10 px-2 py-0.5 text-xs font-semibold text-sage" aria-label={`${recipeCount} recipes saved`}>
+          <span
+            className="rounded-full bg-sage/10 px-2 py-0.5 text-xs font-semibold text-sage"
+            aria-label={`${recipeCount} recipes saved`}
+          >
             {recipeCount}
           </span>
         </NavLink>
@@ -152,7 +165,12 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
 
         {/* Font Size Stepper */}
         <div className="space-y-2" role="group" aria-labelledby="font-size-label">
-          <span id="font-size-label" className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">Font Size</span>
+          <span
+            id="font-size-label"
+            className="text-xs font-semibold text-forest/80 dark:text-cream-text/80"
+          >
+            Font Size
+          </span>
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -164,7 +182,10 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
             >
               &minus;
             </Button>
-            <span className="min-w-[3rem] text-center text-sm font-medium text-forest" aria-live="polite">
+            <span
+              className="min-w-[3rem] text-center text-sm font-medium text-forest"
+              aria-live="polite"
+            >
               {prefs.fontSize}px
             </span>
             <Button
@@ -191,10 +212,12 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
 
         {/* Font Family */}
         <fieldset className="space-y-2" role="radiogroup">
-          <legend className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">Font Family</legend>
+          <legend className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">
+            Font Family
+          </legend>
           <div className="flex gap-1">
             {FONT_FAMILY_OPTIONS.map((opt) => {
-              const selected = prefs.fontFamily === opt.value
+              const selected = prefs.fontFamily === opt.value;
               return (
                 <button
                   key={opt.value}
@@ -203,12 +226,19 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
                   aria-checked={selected}
                   tabIndex={selected ? 0 : -1}
                   onClick={() => updatePrefs({ fontFamily: opt.value })}
-                  onKeyDown={(e) => handleRadioKeyDown(e, FONT_FAMILY_OPTIONS.map(o => o.value), prefs.fontFamily, (v) => updatePrefs({ fontFamily: v }))}
+                  onKeyDown={(e) =>
+                    handleRadioKeyDown(
+                      e,
+                      FONT_FAMILY_OPTIONS.map((o) => o.value),
+                      prefs.fontFamily,
+                      (v) => updatePrefs({ fontFamily: v })
+                    )
+                  }
                   className={segmentedBtnClass(selected)}
                 >
                   {opt.label}
                 </button>
-              )
+              );
             })}
           </div>
         </fieldset>
@@ -218,20 +248,29 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
 
         {/* Contrast */}
         <div className="flex items-center justify-between">
-          <span id="high-contrast-label" className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">High Contrast</span>
+          <span
+            id="high-contrast-label"
+            className="text-xs font-semibold text-forest/80 dark:text-cream-text/80"
+          >
+            High Contrast
+          </span>
           <Switch
-            checked={prefs.contrastMode === 'high'}
-            onCheckedChange={(checked) => updatePrefs({ contrastMode: checked ? 'high' : 'default' })}
+            checked={prefs.contrastMode === "high"}
+            onCheckedChange={(checked) =>
+              updatePrefs({ contrastMode: checked ? "high" : "default" })
+            }
             aria-labelledby="high-contrast-label"
           />
         </div>
 
         {/* Color Blind Mode */}
         <fieldset className="space-y-2" role="radiogroup">
-          <legend className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">Color Blind Mode</legend>
+          <legend className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">
+            Color Blind Mode
+          </legend>
           <div className="flex gap-1">
             {COLORBLIND_OPTIONS.map((opt) => {
-              const selected = prefs.colorBlindMode === opt.value
+              const selected = prefs.colorBlindMode === opt.value;
               return (
                 <button
                   key={opt.value}
@@ -240,12 +279,19 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
                   aria-checked={selected}
                   tabIndex={selected ? 0 : -1}
                   onClick={() => updatePrefs({ colorBlindMode: opt.value })}
-                  onKeyDown={(e) => handleRadioKeyDown(e, COLORBLIND_OPTIONS.map(o => o.value), prefs.colorBlindMode, (v) => updatePrefs({ colorBlindMode: v }))}
+                  onKeyDown={(e) =>
+                    handleRadioKeyDown(
+                      e,
+                      COLORBLIND_OPTIONS.map((o) => o.value),
+                      prefs.colorBlindMode,
+                      (v) => updatePrefs({ colorBlindMode: v })
+                    )
+                  }
                   className={segmentedBtnClass(selected)}
                 >
                   {opt.label}
                 </button>
-              )
+              );
             })}
           </div>
         </fieldset>
@@ -255,10 +301,12 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
 
       {/* Panel Position */}
       <fieldset className="px-4 space-y-2" role="radiogroup">
-        <legend className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">Panel Position</legend>
+        <legend className="text-xs font-semibold text-forest/80 dark:text-cream-text/80">
+          Panel Position
+        </legend>
         <div className="flex gap-1">
-          {(['left', 'right'] as const).map((side) => {
-            const selected = prefs.panelSide === side
+          {(["left", "right"] as const).map((side) => {
+            const selected = prefs.panelSide === side;
             return (
               <button
                 key={side}
@@ -267,12 +315,16 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
                 aria-checked={selected}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => updatePrefs({ panelSide: side })}
-                onKeyDown={(e) => handleRadioKeyDown(e, ['left', 'right'] as const, prefs.panelSide, (v) => updatePrefs({ panelSide: v }))}
+                onKeyDown={(e) =>
+                  handleRadioKeyDown(e, ["left", "right"] as const, prefs.panelSide, (v) =>
+                    updatePrefs({ panelSide: v })
+                  )
+                }
                 className={`${segmentedBtnClass(selected)} capitalize`}
               >
                 {side}
               </button>
-            )
+            );
           })}
         </div>
       </fieldset>
@@ -292,7 +344,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
         </button>
       </div>
     </div>
-  )
+  );
 
   // Mobile: overlay with backdrop
   if (isMobile) {
@@ -309,29 +361,29 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
         {/* Panel */}
         <div
           className={`fixed inset-y-0 z-40 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-in-out ${
-            prefs.panelSide === 'left' ? 'left-0' : 'right-0'
+            prefs.panelSide === "left" ? "left-0" : "right-0"
           } ${
             isOpen
-              ? 'translate-x-0'
-              : prefs.panelSide === 'left'
-                ? '-translate-x-full'
-                : 'translate-x-full'
+              ? "translate-x-0"
+              : prefs.panelSide === "left"
+                ? "-translate-x-full"
+                : "translate-x-full"
           }`}
         >
           {panelContent}
         </div>
       </>
-    )
+    );
   }
 
   // Desktop: inline panel
   return (
     <div
       className={`hidden md:block motion-safe:transition-[width,margin] motion-safe:duration-300 ${
-        isOpen ? 'w-72' : 'w-0'
+        isOpen ? "w-72" : "w-0"
       } overflow-hidden flex-shrink-0`}
     >
       {panelContent}
     </div>
-  )
+  );
 }

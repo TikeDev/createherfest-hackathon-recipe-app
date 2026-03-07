@@ -1,31 +1,33 @@
-import { useState } from 'react'
-import type { ExtractionStatus } from '@/types/agent'
+import { useState } from "react";
+import type { ExtractionStatus } from "@/types/agent";
 
-type InputTab = 'url' | 'text'
+type InputTab = "url" | "text";
 
 interface RecipeInputProps {
-  status: ExtractionStatus
-  onSubmit: (input: { type: 'url'; value: string } | { type: 'text'; value: string }) => void
+  status: ExtractionStatus;
+  onSubmit: (
+    input: { type: "url"; value: string } | { type: "text"; value: string }
+  ) => Promise<void> | void;
 }
 
 export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
-  const [tab, setTab] = useState<InputTab>('url')
-  const [url, setUrl] = useState('')
-  const [text, setText] = useState('')
-  const isLoading = status === 'fetching' || status === 'extracting' || status === 'saving'
+  const [tab, setTab] = useState<InputTab>("url");
+  const [url, setUrl] = useState("");
+  const [text, setText] = useState("");
+  const isLoading = status === "fetching" || status === "extracting" || status === "saving";
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault()
-    if (isLoading) return
+    e.preventDefault();
+    if (isLoading) return;
 
-    if (tab === 'url') {
-      const trimmed = url.trim()
-      if (!trimmed) return
-      onSubmit({ type: 'url', value: trimmed })
+    if (tab === "url") {
+      const trimmed = url.trim();
+      if (!trimmed) return;
+      void onSubmit({ type: "url", value: trimmed });
     } else {
-      const trimmed = text.trim()
-      if (!trimmed) return
-      onSubmit({ type: 'text', value: trimmed })
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      void onSubmit({ type: "text", value: trimmed });
     }
   }
 
@@ -36,12 +38,10 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
         <button
           type="button"
           role="tab"
-          aria-selected={tab === 'url'}
-          onClick={() => setTab('url')}
+          aria-selected={tab === "url"}
+          onClick={() => setTab("url")}
           className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
-            tab === 'url'
-              ? 'bg-sage text-white'
-              : 'text-forest/70 hover:text-forest'
+            tab === "url" ? "bg-sage text-white" : "text-forest/70 hover:text-forest"
           }`}
         >
           From URL
@@ -49,19 +49,17 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
         <button
           type="button"
           role="tab"
-          aria-selected={tab === 'text'}
-          onClick={() => setTab('text')}
+          aria-selected={tab === "text"}
+          onClick={() => setTab("text")}
           className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
-            tab === 'text'
-              ? 'bg-sage text-white'
-              : 'text-forest/70 hover:text-forest'
+            tab === "text" ? "bg-sage text-white" : "text-forest/70 hover:text-forest"
           }`}
         >
           Paste Text
         </button>
       </div>
 
-      {tab === 'url' ? (
+      {tab === "url" ? (
         <div>
           <label htmlFor="recipe-url" className="block text-sm font-medium text-forest mb-1">
             Recipe URL
@@ -95,11 +93,11 @@ export function RecipeInput({ status, onSubmit }: RecipeInputProps) {
 
       <button
         type="submit"
-        disabled={isLoading || (tab === 'url' ? !url.trim() : !text.trim())}
+        disabled={isLoading || (tab === "url" ? !url.trim() : !text.trim())}
         className="w-full rounded-lg bg-sage px-6 py-3 text-sm font-semibold text-white hover:bg-sage-dark focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {isLoading ? 'Simmer is thinking...' : 'Extract Recipe'}
+        {isLoading ? "Simmer is thinking..." : "Extract Recipe"}
       </button>
     </form>
-  )
+  );
 }

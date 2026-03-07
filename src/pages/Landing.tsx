@@ -1,67 +1,67 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Icon } from '@/components/ui/icon'
-import { Leaf, Sun, Zap } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Icon } from "@/components/ui/icon";
+import { Leaf, Sun, Zap } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 const PLACEHOLDERS = [
-  'tired but craving something warm and spicy...',
-  'lots of energy, want to try something new...',
-  'brain fog day, something simple from home...',
-  'medium energy, feeling like Korean food...',
-]
+  "tired but craving something warm and spicy...",
+  "lots of energy, want to try something new...",
+  "brain fog day, something simple from home...",
+  "medium energy, feeling like Korean food...",
+];
 
-export type EnergyLevel = 'low' | 'medium' | 'high'
+export type EnergyLevel = "low" | "medium" | "high";
 
 const ENERGY_OPTIONS: { value: EnergyLevel; icon: LucideIcon; label: string; color: string }[] = [
-  { value: 'low',    icon: Leaf, label: 'Low energy',   color: 'text-sage' },
-  { value: 'medium', icon: Sun,  label: 'Medium',       color: 'text-amber-500' },
-  { value: 'high',   icon: Zap,  label: 'Feeling good', color: 'text-orange-500' },
-]
+  { value: "low", icon: Leaf, label: "Low energy", color: "text-sage" },
+  { value: "medium", icon: Sun, label: "Medium", color: "text-amber-500" },
+  { value: "high", icon: Zap, label: "Feeling good", color: "text-orange-500" },
+];
 
 export default function Landing() {
-  const navigate = useNavigate()
-  const [energy, setEnergy] = useState<EnergyLevel | null>(null)
-  const [note, setNote] = useState('')
-  const [placeholderIdx, setPlaceholderIdx] = useState(0)
-  const [placeholderVisible, setPlaceholderVisible] = useState(true)
+  const navigate = useNavigate();
+  const [energy, setEnergy] = useState<EnergyLevel | null>(null);
+  const [note, setNote] = useState("");
+  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const [placeholderVisible, setPlaceholderVisible] = useState(true);
 
   // Cycle placeholder text with a crossfade
   useEffect(() => {
     const id = setInterval(() => {
-      setPlaceholderVisible(false)
+      setPlaceholderVisible(false);
       setTimeout(() => {
-        setPlaceholderIdx((i) => (i + 1) % PLACEHOLDERS.length)
-        setPlaceholderVisible(true)
-      }, 300)
-    }, 3000)
-    return () => clearInterval(id)
-  }, [])
+        setPlaceholderIdx((i) => (i + 1) % PLACEHOLDERS.length);
+        setPlaceholderVisible(true);
+      }, 300);
+    }, 3000);
+    return () => clearInterval(id);
+  }, []);
 
-  const canSubmit = energy !== null || note.trim().length > 0
+  const canSubmit = energy !== null || note.trim().length > 0;
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!canSubmit) return
-    navigate('/recipes', { state: { energy, note: note.trim() } })
+    e.preventDefault();
+    if (!canSubmit) return;
+    void navigate("/recipes", { state: { energy, note: note.trim() } });
   }
 
   function handleEnergyClick(value: EnergyLevel) {
-    setEnergy((prev) => (prev === value ? null : value))
+    setEnergy((prev) => (prev === value ? null : value));
   }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-10">
-
         {/* Brand header */}
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-headline text-sage">Simmer</h1>
-          <p className="text-sm text-forest/60 dark:text-cream-text/60">Cook what your brain and body need today.</p>
+          <p className="text-sm text-forest/60 dark:text-cream-text/60">
+            Cook what your brain and body need today.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-
           {/* Energy level chips */}
           <fieldset className="space-y-3">
             <legend className="text-sm font-semibold text-forest dark:text-cream-text">
@@ -69,7 +69,7 @@ export default function Landing() {
             </legend>
             <div className="flex gap-3" role="group">
               {ENERGY_OPTIONS.map((opt) => {
-                const selected = energy === opt.value
+                const selected = energy === opt.value;
                 return (
                   <button
                     key={opt.value}
@@ -78,21 +78,24 @@ export default function Landing() {
                     aria-pressed={selected}
                     className={`flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl border-2 text-xs font-semibold transition-all duration-200 ${
                       selected
-                        ? 'border-sage bg-surface text-sage shadow-sm'
-                        : 'border-mist-pale bg-surface text-forest/60 hover:border-mist hover:text-forest dark:text-cream-text/60 dark:border-forest dark:hover:border-mist dark:hover:text-cream'
+                        ? "border-sage bg-surface text-sage shadow-sm"
+                        : "border-mist-pale bg-surface text-forest/60 hover:border-mist hover:text-forest dark:text-cream-text/60 dark:border-forest dark:hover:border-mist dark:hover:text-cream"
                     }`}
                   >
                     <Icon icon={opt.icon} size="lg" decorative className={opt.color} />
                     <span>{opt.label}</span>
                   </button>
-                )
+                );
               })}
             </div>
           </fieldset>
 
           {/* Craving text input */}
           <div className="space-y-3">
-            <label htmlFor="craving-input" className="block text-sm font-semibold text-forest dark:text-cream-text">
+            <label
+              htmlFor="craving-input"
+              className="block text-sm font-semibold text-forest dark:text-cream-text"
+            >
               What sounds good to eat?
             </label>
             <div className="relative">
@@ -109,7 +112,7 @@ export default function Landing() {
                 <div
                   aria-hidden="true"
                   className={`absolute top-3 left-4 right-4 text-sm text-forest/40 dark:text-cream-text/40 pointer-events-none select-none transition-opacity duration-300 ${
-                    placeholderVisible ? 'opacity-100' : 'opacity-0'
+                    placeholderVisible ? "opacity-100" : "opacity-0"
                   }`}
                 >
                   {PLACEHOLDERS[placeholderIdx]}
@@ -130,17 +133,18 @@ export default function Landing() {
 
         {/* Browse without session */}
         <p className="text-center text-xs text-forest/50 dark:text-cream-text/50">
-          Already know what you want?{' '}
+          Already know what you want?{" "}
           <button
             type="button"
-            onClick={() => navigate('/recipes')}
+            onClick={() => {
+              void navigate("/recipes");
+            }}
             className="text-sage underline hover:text-sage-dark transition-colors"
           >
             Browse all recipes
           </button>
         </p>
-
       </div>
     </div>
-  )
+  );
 }

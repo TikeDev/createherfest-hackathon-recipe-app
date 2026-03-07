@@ -1,29 +1,32 @@
-import { useEffect, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
-import { getRecipe } from '@/storage/recipes'
-import { IngredientList } from '@/components/recipe/IngredientList'
-import { StepList } from '@/components/recipe/StepList'
-import type { RecipeJSON } from '@/types/recipe'
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { getRecipe } from "@/storage/recipes";
+import { IngredientList } from "@/components/recipe/IngredientList";
+import { StepList } from "@/components/recipe/StepList";
+import type { RecipeJSON } from "@/types/recipe";
 
 export default function RecipeDetail() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const [recipe, setRecipe] = useState<RecipeJSON | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [recipe, setRecipe] = useState<RecipeJSON | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return
-    getRecipe(id)
+    if (!id) return;
+    void getRecipe(id)
       .then((r) => setRecipe(r ?? null))
-      .finally(() => setLoading(false))
-  }, [id])
+      .finally(() => setLoading(false));
+  }, [id]);
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-12 text-center text-sm text-forest/60" role="status">
+      <div
+        className="max-w-2xl mx-auto px-4 py-12 text-center text-sm text-forest/60"
+        role="status"
+      >
         Simmer is thinking...
       </div>
-    )
+    );
   }
 
   if (!recipe) {
@@ -34,21 +37,23 @@ export default function RecipeDetail() {
           Back to recipes
         </Link>
       </div>
-    )
+    );
   }
 
   const extractedDate = new Date(recipe.extractedAt).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
       {/* Header */}
       <div>
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            void navigate(-1);
+          }}
           className="text-sm text-sage hover:underline mb-4 block"
           aria-label="Go back"
         >
@@ -67,7 +72,9 @@ export default function RecipeDetail() {
 
       {/* Start Cooking CTA */}
       <button
-        onClick={() => navigate(`/cook/${recipe.id}`)}
+        onClick={() => {
+          void navigate(`/cook/${recipe.id}`);
+        }}
         className="w-full bg-sage hover:bg-sage-dark text-white font-semibold py-3 px-6 rounded-xl text-sm transition-colors"
       >
         I'm ready. Let's cook →
@@ -82,7 +89,9 @@ export default function RecipeDetail() {
           <ul className="space-y-1.5">
             {recipe.preamble.tips.map((tip, i) => (
               <li key={i} className="text-sm text-forest/80 flex gap-2">
-                <span aria-hidden="true" className="text-sage mt-0.5">•</span>
+                <span aria-hidden="true" className="text-sage mt-0.5">
+                  •
+                </span>
                 {tip}
               </li>
             ))}
@@ -95,7 +104,7 @@ export default function RecipeDetail() {
 
       {recipe.sourceUrl && (
         <p className="text-xs text-forest/50">
-          Original recipe:{' '}
+          Original recipe:{" "}
           <a
             href={recipe.sourceUrl}
             target="_blank"
@@ -107,5 +116,5 @@ export default function RecipeDetail() {
         </p>
       )}
     </div>
-  )
+  );
 }

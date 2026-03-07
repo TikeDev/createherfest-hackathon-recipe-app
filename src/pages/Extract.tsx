@@ -1,24 +1,31 @@
-import { useNavigate } from 'react-router-dom'
-import { RecipeInput } from '@/components/extraction/RecipeInput'
-import { ExtractionProgressDisplay } from '@/components/extraction/ExtractionProgress'
-import { useRecipeExtraction } from '@/hooks/useRecipeExtraction'
-import { Icon } from '@/components/ui/icon'
-import { CircleCheck } from 'lucide-react'
+import { useNavigate } from "react-router-dom";
+import { RecipeInput } from "@/components/extraction/RecipeInput";
+import { ExtractionProgressDisplay } from "@/components/extraction/ExtractionProgress";
+import { useRecipeExtraction } from "@/hooks/useRecipeExtraction";
+import { Icon } from "@/components/ui/icon";
+import { CircleCheck } from "lucide-react";
 
 export default function Extract() {
-  const navigate = useNavigate()
-  const { status, progress, result, error, run, reset } = useRecipeExtraction()
+  const navigate = useNavigate();
+  const { status, progress, result, error, run, reset } = useRecipeExtraction();
 
   // Navigate to recipe detail once extraction is done
-  if (status === 'done' && result) {
+  if (status === "done" && result) {
     return (
       <div className="max-w-xl mx-auto px-4 py-12 text-center space-y-4">
-        <Icon icon={CircleCheck} size="xl" label="Recipe saved successfully" className="text-sage" />
+        <Icon
+          icon={CircleCheck}
+          size="xl"
+          label="Recipe saved successfully"
+          className="text-sage"
+        />
         <h1 className="text-xl font-headline text-forest">{result.title}</h1>
         <p className="text-sm text-forest/60">Nice work. That recipe is saved.</p>
         <div className="flex gap-3 justify-center">
           <button
-            onClick={() => navigate(`/recipe/${result.id}`)}
+            onClick={() => {
+              void navigate(`/recipe/${result.id}`);
+            }}
             className="rounded-lg bg-sage px-5 py-2.5 text-sm font-semibold text-white hover:bg-sage-dark focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2"
           >
             View Recipe
@@ -31,7 +38,7 @@ export default function Extract() {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -47,5 +54,5 @@ export default function Extract() {
 
       <ExtractionProgressDisplay status={status} progress={progress} error={error} />
     </div>
-  )
+  );
 }

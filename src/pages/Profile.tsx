@@ -1,10 +1,10 @@
-import { useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { useProfile } from '@/hooks/useProfile'
-import { handleRadioKeyDown } from '@/utils/a11y'
-import { Slider } from '@/components/ui/slider'
-import { ALARM_SOUNDS } from '@/constants/alarmSounds'
-import { saveCustomAlarm, deleteCustomAlarm } from '@/storage/customAlarms'
+import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import { useProfile } from "@/hooks/useProfile";
+import { handleRadioKeyDown } from "@/utils/a11y";
+import { Slider } from "@/components/ui/slider";
+import { ALARM_SOUNDS } from "@/constants/alarmSounds";
+import { saveCustomAlarm, deleteCustomAlarm } from "@/storage/customAlarms";
 import {
   FDA_ALLERGENS,
   DIET_PATTERNS,
@@ -16,17 +16,17 @@ import {
   COGNITIVE_LOAD_LEVELS,
   BUDGET_LEVELS,
   LIMITATION_DURATIONS,
-} from '@/types/profile'
+} from "@/types/profile";
 
 type ArrayField =
-  | 'allergens'
-  | 'excludedIngredients'
-  | 'toolRestrictions'
-  | 'mobilityLimits'
-  | 'dexterityLimits'
-  | 'dietPattern'
-  | 'prepAssistPreferences'
-  | 'preferredAppliances'
+  | "allergens"
+  | "excludedIngredients"
+  | "toolRestrictions"
+  | "mobilityLimits"
+  | "dexterityLimits"
+  | "dietPattern"
+  | "prepAssistPreferences"
+  | "preferredAppliances";
 
 // --- Reusable sub-components ---
 
@@ -37,17 +37,17 @@ function ChipGroup({
   selected,
   onToggle,
 }: {
-  legend: string
-  options: readonly string[]
-  selected: string[]
-  onToggle: (value: string) => void
+  legend: string;
+  options: readonly string[];
+  selected: string[];
+  onToggle: (value: string) => void;
 }) {
   return (
     <fieldset className="space-y-2">
       <legend className="text-sm font-semibold text-forest dark:text-cream">{legend}</legend>
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => {
-          const isSelected = selected.includes(opt)
+          const isSelected = selected.includes(opt);
           return (
             <button
               key={opt}
@@ -56,17 +56,17 @@ function ChipGroup({
               onClick={() => onToggle(opt)}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 ${
                 isSelected
-                  ? 'bg-sage text-white'
-                  : 'border border-mist-pale bg-surface text-forest/70 hover:border-mist hover:text-forest dark:text-cream/70 dark:border-forest dark:hover:border-mist dark:hover:text-cream'
+                  ? "bg-sage text-white"
+                  : "border border-mist-pale bg-surface text-forest/70 hover:border-mist hover:text-forest dark:text-cream/70 dark:border-forest dark:hover:border-mist dark:hover:text-cream"
               }`}
             >
               {opt}
             </button>
-          )
+          );
         })}
       </div>
     </fieldset>
-  )
+  );
 }
 
 /** Single-select radio group (pill style) */
@@ -77,18 +77,18 @@ function RadioPillGroup<T extends string>({
   onChange,
   labels,
 }: {
-  legend: string
-  options: readonly T[]
-  selected: T
-  onChange: (value: T) => void
-  labels?: Record<T, string>
+  legend: string;
+  options: readonly T[];
+  selected: T;
+  onChange: (value: T) => void;
+  labels?: Record<T, string>;
 }) {
   return (
     <fieldset className="space-y-2" role="radiogroup">
       <legend className="text-sm font-semibold text-forest dark:text-cream">{legend}</legend>
       <div className="flex flex-wrap gap-1">
         {options.map((opt) => {
-          const isSelected = selected === opt
+          const isSelected = selected === opt;
           return (
             <button
               key={opt}
@@ -97,22 +97,20 @@ function RadioPillGroup<T extends string>({
               aria-checked={isSelected}
               tabIndex={isSelected ? 0 : -1}
               onClick={() => onChange(opt)}
-              onKeyDown={(e) =>
-                handleRadioKeyDown(e, [...options], selected, onChange)
-              }
+              onKeyDown={(e) => handleRadioKeyDown(e, [...options], selected, onChange)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium capitalize transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 ${
                 isSelected
-                  ? 'bg-sage text-white'
-                  : 'border border-mist-pale bg-surface text-forest/70 hover:bg-mist-pale dark:text-cream/70 dark:border-forest'
+                  ? "bg-sage text-white"
+                  : "border border-mist-pale bg-surface text-forest/70 hover:bg-mist-pale dark:text-cream/70 dark:border-forest"
               }`}
             >
               {labels ? labels[opt] : opt}
             </button>
-          )
+          );
         })}
       </div>
     </fieldset>
-  )
+  );
 }
 
 /** Free-text chip input for excluded ingredients */
@@ -122,28 +120,28 @@ function FreeTextChips({
   onAdd,
   onRemove,
 }: {
-  legend: string
-  values: string[]
-  onAdd: (value: string) => void
-  onRemove: (value: string) => void
+  legend: string;
+  values: string[];
+  onAdd: (value: string) => void;
+  onRemove: (value: string) => void;
 }) {
-  const [input, setInput] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [input, setInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      const trimmed = input.trim().toLowerCase()
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const trimmed = input.trim().toLowerCase();
       if (trimmed && !values.includes(trimmed)) {
-        onAdd(trimmed)
+        onAdd(trimmed);
       }
-      setInput('')
+      setInput("");
     }
   }
 
   function handleRemove(value: string) {
-    onRemove(value)
-    inputRef.current?.focus()
+    onRemove(value);
+    inputRef.current?.focus();
   }
 
   return (
@@ -181,7 +179,7 @@ function FreeTextChips({
         className="w-full rounded-lg border border-mist-pale bg-surface px-3 py-2 text-sm text-forest placeholder:text-forest/40 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage dark:text-cream dark:border-forest dark:placeholder:text-cream/40 dark:focus:border-sage"
       />
     </fieldset>
-  )
+  );
 }
 
 /** Collapsible section card */
@@ -190,9 +188,9 @@ function Section({
   defaultOpen,
   children,
 }: {
-  title: string
-  defaultOpen?: boolean
-  children: React.ReactNode
+  title: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
 }) {
   return (
     <details
@@ -210,14 +208,14 @@ function Section({
       </summary>
       <div className="space-y-6 px-5 pb-5">{children}</div>
     </details>
-  )
+  );
 }
 
 // --- Main page ---
 
 export default function Profile() {
-  const { profile, loading, saveStatus, update } = useProfile()
-  const [uploadError, setUploadError] = useState<string>('')
+  const { profile, loading, saveStatus, update } = useProfile();
+  const [uploadError, setUploadError] = useState<string>("");
 
   if (loading || !profile) {
     return (
@@ -226,45 +224,43 @@ export default function Profile() {
           Loading profile...
         </p>
       </div>
-    )
+    );
   }
 
   async function handleCustomAlarmUpload(file: File) {
-    setUploadError('')
+    setUploadError("");
     try {
-      const result = await saveCustomAlarm(file)
+      const result = await saveCustomAlarm(file);
       if (result.success) {
-        update({ 
+        update({
           customAlarmUploaded: true,
-          alarmSound: 'custom'
-        })
+          alarmSoundId: "custom",
+        });
       } else {
-        setUploadError(result.error || 'Upload failed')
+        setUploadError(result.error || "Upload failed");
       }
     } catch {
-      setUploadError('Failed to upload custom alarm')
+      setUploadError("Failed to upload custom alarm");
     }
   }
 
   async function handleCustomAlarmDelete() {
     try {
-      await deleteCustomAlarm()
-      update({ 
+      await deleteCustomAlarm();
+      update({
         customAlarmUploaded: false,
-        alarmSound: 'moderate'
-      })
+        alarmSoundId: "moderate",
+      });
     } catch (err) {
-      console.error('Failed to delete custom alarm:', err)
+      console.error("Failed to delete custom alarm:", err);
     }
   }
 
   function toggleArrayValue(field: ArrayField, value: string) {
-    if (!profile) return
-    const current = profile[field]
-    const next = current.includes(value)
-      ? current.filter((v) => v !== value)
-      : [...current, value]
-    update({ [field]: next })
+    if (!profile) return;
+    const current = profile[field];
+    const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+    update({ [field]: next });
   }
 
   return (
@@ -278,8 +274,8 @@ export default function Profile() {
             aria-live="polite"
             className="text-xs text-forest/50 dark:text-cream/50"
           >
-            {saveStatus === 'saving' && 'Saving...'}
-            {saveStatus === 'saved' && 'Saved'}
+            {saveStatus === "saving" && "Saving..."}
+            {saveStatus === "saved" && "Saved"}
           </span>
           <Link
             to="/recipes"
@@ -291,7 +287,8 @@ export default function Profile() {
       </div>
 
       <p className="text-sm text-forest/60 dark:text-cream/60">
-        Your profile helps Simmer find recipes that work for your body and kitchen. Changes save automatically.
+        Your profile helps Simmer find recipes that work for your body and kitchen. Changes save
+        automatically.
       </p>
 
       {/* Section 1: Safety & Allergens */}
@@ -300,7 +297,7 @@ export default function Profile() {
           legend="Allergens (FDA top 9)"
           options={FDA_ALLERGENS}
           selected={profile.allergens}
-          onToggle={(v) => toggleArrayValue('allergens', v)}
+          onToggle={(v) => toggleArrayValue("allergens", v)}
         />
 
         <FreeTextChips
@@ -318,7 +315,7 @@ export default function Profile() {
           legend="Restricted tools & techniques"
           options={TOOL_RESTRICTIONS}
           selected={profile.toolRestrictions}
-          onToggle={(v) => toggleArrayValue('toolRestrictions', v)}
+          onToggle={(v) => toggleArrayValue("toolRestrictions", v)}
         />
       </Section>
 
@@ -335,14 +332,14 @@ export default function Profile() {
           legend="Mobility"
           options={MOBILITY_LIMITS}
           selected={profile.mobilityLimits}
-          onToggle={(v) => toggleArrayValue('mobilityLimits', v)}
+          onToggle={(v) => toggleArrayValue("mobilityLimits", v)}
         />
 
         <ChipGroup
           legend="Dexterity & fine motor"
           options={DEXTERITY_LIMITS}
           selected={profile.dexterityLimits}
-          onToggle={(v) => toggleArrayValue('dexterityLimits', v)}
+          onToggle={(v) => toggleArrayValue("dexterityLimits", v)}
         />
       </Section>
 
@@ -352,21 +349,21 @@ export default function Profile() {
           legend="Diet patterns"
           options={DIET_PATTERNS}
           selected={profile.dietPattern}
-          onToggle={(v) => toggleArrayValue('dietPattern', v)}
+          onToggle={(v) => toggleArrayValue("dietPattern", v)}
         />
 
         <ChipGroup
           legend="Preferred appliances"
           options={PREFERRED_APPLIANCES}
           selected={profile.preferredAppliances}
-          onToggle={(v) => toggleArrayValue('preferredAppliances', v)}
+          onToggle={(v) => toggleArrayValue("preferredAppliances", v)}
         />
 
         <ChipGroup
           legend="Prep shortcuts you like"
           options={PREP_ASSIST_OPTIONS}
           selected={profile.prepAssistPreferences}
-          onToggle={(v) => toggleArrayValue('prepAssistPreferences', v)}
+          onToggle={(v) => toggleArrayValue("prepAssistPreferences", v)}
         />
 
         <RadioPillGroup
@@ -374,7 +371,7 @@ export default function Profile() {
           options={COGNITIVE_LOAD_LEVELS}
           selected={profile.cognitiveLoad}
           onChange={(v) => update({ cognitiveLoad: v })}
-          labels={{ low: 'Simple', medium: 'Moderate', high: 'Complex' }}
+          labels={{ low: "Simple", medium: "Moderate", high: "Complex" }}
         />
       </Section>
 
@@ -386,8 +383,8 @@ export default function Profile() {
             Alarm Sound
           </legend>
           <select
-            value={profile.alarmSound}
-            onChange={(e) => update({ alarmSound: e.target.value })}
+            value={profile.alarmSoundId}
+            onChange={(e) => update({ alarmSoundId: e.target.value })}
             className="w-full rounded-lg border border-mist-pale bg-surface px-3 py-2 text-sm text-forest focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage dark:text-cream-text dark:border-forest dark:focus:border-sage"
             aria-label="Select alarm sound"
           >
@@ -396,9 +393,7 @@ export default function Profile() {
                 {sound.label} — {sound.description}
               </option>
             ))}
-            {profile.customAlarmUploaded && (
-              <option value="custom">Custom Sound</option>
-            )}
+            {profile.customAlarmUploaded && <option value="custom">Custom Sound</option>}
           </select>
         </fieldset>
 
@@ -408,7 +403,7 @@ export default function Profile() {
             Volume: {profile.alarmVolume}%
           </legend>
           <Slider
-            value={[profile.alarmVolume]}
+            value={[profile.alarmVolume ?? 70]}
             onValueChange={(values) => update({ alarmVolume: values[0] })}
             min={0}
             max={100}
@@ -447,15 +442,15 @@ export default function Profile() {
           <p className="text-xs text-forest/60 dark:text-cream-text/60">
             Upload your own alarm sound (MP3, WAV, OGG, or M4A, max 2MB, max 10 seconds)
           </p>
-          
+
           {!profile.customAlarmUploaded ? (
             <div>
               <input
                 type="file"
                 accept="audio/mp3,audio/mpeg,audio/wav,audio/ogg,audio/m4a,audio/x-m4a"
                 onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) void handleCustomAlarmUpload(file)
+                  const file = e.target.files?.[0];
+                  if (file) void handleCustomAlarmUpload(file);
                 }}
                 className="block w-full text-sm text-forest dark:text-cream-text
                   file:mr-4 file:py-2 file:px-4
@@ -523,17 +518,13 @@ export default function Profile() {
                 max={120}
                 step={15}
                 value={profile.timePreferenceMinutes}
-                onChange={(e) =>
-                  update({ timePreferenceMinutes: Number(e.target.value) })
-                }
+                onChange={(e) => update({ timePreferenceMinutes: Number(e.target.value) })}
                 aria-valuetext={`${profile.timePreferenceMinutes} minutes`}
                 className="w-full accent-sage focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 rounded-lg"
               />
               <div className="flex justify-between text-xs text-forest/50 dark:text-cream/50">
                 <span>15 min</span>
-                <span className="font-semibold text-sage">
-                  {profile.timePreferenceMinutes} min
-                </span>
+                <span className="font-semibold text-sage">{profile.timePreferenceMinutes} min</span>
                 <span>120 min</span>
               </div>
             </div>
@@ -544,11 +535,11 @@ export default function Profile() {
         <RadioPillGroup
           legend="Budget level"
           options={BUDGET_LEVELS}
-          selected={profile.budgetLevel ?? 'medium'}
+          selected={profile.budgetLevel ?? "medium"}
           onChange={(v) => update({ budgetLevel: v })}
-          labels={{ low: 'Budget-friendly', medium: 'Moderate', high: 'No limit' }}
+          labels={{ low: "Budget-friendly", medium: "Moderate", high: "No limit" }}
         />
       </Section>
     </div>
-  )
+  );
 }
