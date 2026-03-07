@@ -132,14 +132,14 @@ export default function Landing() {
         </form>
 
         {/* Browse without session */}
-        <p className="text-center text-xs text-forest/50 dark:text-cream-text/50">
+        <p className="text-center text-sm text-forest/60 dark:text-cream-text/60">
           Already know what you want?{" "}
           <button
             type="button"
             onClick={() => {
               void navigate("/recipes");
             }}
-            className="text-sage underline hover:text-sage-dark transition-colors"
+            className="text-sage font-semibold underline hover:text-sage-dark transition-colors"
           >
             Browse all recipes
           </button>

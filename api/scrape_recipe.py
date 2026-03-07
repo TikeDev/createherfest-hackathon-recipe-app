@@ -37,7 +37,7 @@ def _safe_call(fn, default=None):
         return default
 
 
-class handler(BaseHTTPRequestHandler):
+class handler(BaseHTTPRequestHandler):  # noqa: N801
     def do_OPTIONS(self):
         self.send_response(204)
         for k, v in CORS_HEADERS.items():
@@ -98,7 +98,9 @@ class handler(BaseHTTPRequestHandler):
         # Validate protocol
         parsed = urlparse(url)
         if parsed.scheme not in ("http", "https"):
-            _json_response(self, 400, {"error": "Only http and https URLs are allowed."})
+            _json_response(
+                self, 400, {"error": "Only http and https URLs are allowed."}
+            )
             return
 
         # Fetch HTML

@@ -11,6 +11,7 @@ import { handleRadioKeyDown } from "@/utils/a11y";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { Home, Plus, BookOpen, User, PanelLeft, PanelRight } from "lucide-react";
 
 interface SidePanelProps {
   isOpen: boolean;
@@ -138,15 +139,15 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
       {/* Navigation */}
       <nav aria-label="Main navigation" className="px-3 space-y-1">
         <NavLink to="/" className={navLinkClass} end onClick={isMobile ? onClose : undefined}>
-          <span aria-hidden="true">&#x1F3E0;</span>
+          <Home className="w-5 h-5" aria-hidden="true" />
           Home
         </NavLink>
         <NavLink to="/extract" className={navLinkClass} onClick={isMobile ? onClose : undefined}>
-          <span aria-hidden="true">&#x2795;</span>
+          <Plus className="w-5 h-5" aria-hidden="true" />
           Add Recipe
         </NavLink>
         <NavLink to="/recipes" className={navLinkClass} onClick={isMobile ? onClose : undefined}>
-          <span aria-hidden="true">&#x1F4D6;</span>
+          <BookOpen className="w-5 h-5" aria-hidden="true" />
           <span className="flex-1">Saved Recipes</span>
           <span
             className="rounded-full bg-sage/10 px-2 py-0.5 text-xs font-semibold text-sage"
@@ -156,7 +157,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
           </span>
         </NavLink>
         <NavLink to="/profile" className={navLinkClass} onClick={isMobile ? onClose : undefined}>
-          <span aria-hidden="true">&#x1F464;</span>
+          <User className="w-5 h-5" aria-hidden="true" />
           My Profile
         </NavLink>
       </nav>
@@ -313,6 +314,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
         <div className="flex gap-1">
           {(["left", "right"] as const).map((side) => {
             const selected = prefs.panelSide === side;
+            const Icon = side === "left" ? PanelLeft : PanelRight;
             return (
               <button
                 key={side}
@@ -326,8 +328,9 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
                     updatePrefs({ panelSide: v })
                   )
                 }
-                className={`${segmentedBtnClass(selected)} capitalize`}
+                className={`${segmentedBtnClass(selected)} capitalize flex items-center gap-1.5 justify-center`}
               >
+                <Icon className="w-4 h-4" aria-hidden="true" />
                 {side}
               </button>
             );
