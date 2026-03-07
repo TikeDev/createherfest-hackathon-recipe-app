@@ -1,7 +1,8 @@
 #!/bin/bash
 # Launch Chrome Beta with remote debugging for MCP server connection
-# Usage: ./launch-chrome-beta.sh [--fresh] [URL]
+# Usage: ./launch-chrome-beta.sh [--fresh] [--profile-dir=/path] [URL]
 #   --fresh: Use temporary profile (default: persistent profile)
+#   --profile-dir=/path: Override the profile directory
 #   URL: URL to open (default: http://localhost:5173)
 
 CHROME_BETA_PATH="/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta"
@@ -23,17 +24,23 @@ else
 fi
 
 USE_FRESH=false
+PROFILE_OVERRIDE=""
 TARGET_URL="$DEFAULT_URL"
 
 for arg in "$@"; do
   if [[ "$arg" == "--fresh" ]]; then
     USE_FRESH=true
+  elif [[ "$arg" == --profile-dir=* ]]; then
+    PROFILE_OVERRIDE="${arg#--profile-dir=}"
   elif [[ "$arg" == http* ]]; then
     TARGET_URL="$arg"
   fi
 done
 
-if [ "$USE_FRESH" = true ]; then
+if [ -n "$PROFILE_OVERRIDE" ]; then
+  USER_DATA_DIR="$PROFILE_OVERRIDE"
+  echo "🧩 Using custom profile at $USER_DATA_DIR"
+elif [ "$USE_FRESH" = true ]; then
   USER_DATA_DIR="$TEMP_PROFILE"
   echo "🧹 Using temporary profile (will be cleaned on close)"
 else

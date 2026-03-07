@@ -10,6 +10,7 @@
     "dev:full": "vercel dev --yes --listen 5173",
     "dev:browser": "vercel dev --yes --listen 5173 & wait-on http://localhost:5173 && ./scripts/launch-chrome-beta.sh",
     "dev:browser:fresh": "vercel dev --yes --listen 5173 & wait-on http://localhost:5173 && ./scripts/launch-chrome-beta.sh --fresh",
+    "dev:browser:codex": "vercel dev --yes --listen 5173 & wait-on http://localhost:5173 && ./scripts/launch-chrome-beta.sh --profile-dir=/tmp/chrome-codex",
     "dev:browser:brave": "vercel dev --yes --listen 5173 & wait-on http://localhost:5173 && .\\scripts\\launch-brave.bat",
     "dev:browser:brave:fresh": "vercel dev --yes --listen 5173 & wait-on http://localhost:5173 && .\\scripts\\launch-brave.bat --fresh",
     "build": "tsc -b && vite build",
