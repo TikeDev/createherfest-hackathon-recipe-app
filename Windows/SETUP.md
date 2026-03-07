@@ -70,8 +70,10 @@ You should see `Python 3.x.x`.
 In Command Prompt, type:
 
 ```
-cd C:\Users\Metal\CreateHerFest\createherfest-hackathon-simmer
+cd C:\Projects\simmer
 ```
+
+(Replace `C:\Projects\simmer` with wherever you cloned the repository.)
 
 Press Enter. Your prompt should now show that path.
 
@@ -99,7 +101,7 @@ This installs `recipe-scrapers` and `requests` — used by the recipe URL import
 
 ## Step 7 — Set Up Your API Key
 
-1. In File Explorer, go to `C:\Users\Metal\CreateHerFest\createherfest-hackathon-simmer`
+1. In File Explorer, go to your project folder (e.g., `C:\Projects\simmer`)
 2. Find the file named `.env.example`
 3. Make a copy of it in the same folder and rename the copy to `.env`
    - Right-click → Copy, then right-click → Paste, then rename the new file
