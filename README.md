@@ -89,7 +89,7 @@ Add your `VITE_OPENAI_API_KEY` to `.env`, then open **http://localhost:5173** in
 
 ## 👥 Team & Acknowledgments
 
-**Team Name:** [Spice Studio]
+**Team Name:** Spice Studio
 
 | Name | Role | GitHub | LinkedIn |
 | :---- | :---- | :---- | :---- |
