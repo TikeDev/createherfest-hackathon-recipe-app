@@ -34,15 +34,15 @@ const COLORBLIND_OPTIONS = [
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium motion-safe:transition-colors ${
     isActive
-      ? "bg-sage/10 text-sage dark:text-sage"
-      : "text-forest/70 hover:bg-surface hover:text-forest dark:text-cream-text/70 dark:hover:bg-forest/50 dark:hover:text-cream"
+      ? "bg-[color:color-mix(in_srgb,var(--color-sage)_15%,transparent)] text-forest dark:text-cream-text"
+      : "text-forest/75 hover:bg-surface hover:text-forest dark:text-cream-text/70 dark:hover:bg-forest/60 dark:hover:text-cream"
   }`;
 
 const segmentedBtnClass = (selected: boolean) =>
   `flex-1 rounded-lg px-2 py-1.5 text-xs font-medium motion-safe:transition-colors ${
     selected
-      ? "bg-sage text-white"
-      : "bg-surface border border-mist-pale text-forest/70 hover:bg-mist-pale dark:text-cream-text/70 dark:border-forest"
+      ? "bg-sage-dark text-white"
+      : "bg-surface border border-mist-pale text-forest/80 hover:bg-mist-pale dark:text-cream-text/70 dark:border-forest"
   }`;
 
 export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps) {
@@ -114,10 +114,10 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
         <Link
           to="/"
           id="side-panel-title"
-          className="flex items-center gap-2 mx-auto text-2xl font-headline text-sage no-underline"
+          className="flex items-center gap-2 mx-auto text-2xl font-headline text-sage-dark dark:text-mist no-underline"
           onClick={isMobile ? onClose : undefined}
         >
-          <img src="/simmer-logo-192.png" alt="" className="h-10 w-10" aria-hidden="true" />
+          <img src="/simmer-logo-192.png" alt="Simmer logo" className="h-10 w-10" />
           Simmer
         </Link>
         {isMobile && (
@@ -150,7 +150,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
           <BookOpen className="w-5 h-5" aria-hidden="true" />
           <span className="flex-1">Saved Recipes</span>
           <span
-            className="rounded-full bg-sage/10 px-2 py-0.5 text-xs font-semibold text-sage"
+            className="rounded-full bg-[color:color-mix(in_srgb,var(--color-sage)_20%,transparent)] px-2 py-0.5 text-xs font-semibold text-forest dark:text-cream-text"
             aria-label={`${recipeCount} recipes saved`}
           >
             {recipeCount}
@@ -210,7 +210,7 @@ export default function SidePanel({ isOpen, onClose, isMobile }: SidePanelProps)
             <button
               type="button"
               onClick={() => updatePrefs({ fontSize: 16 })}
-              className="text-xs text-sage hover:text-sage-dark focus:outline-none focus:underline"
+              className="text-xs text-sage-dark hover:text-forest focus:outline-none focus:underline dark:text-mist dark:hover:text-cream-text"
             >
               Reset to default
             </button>

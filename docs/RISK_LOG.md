@@ -31,7 +31,8 @@
 | Area | Issue Description | Severity | Fix Applied | Evidence/Link | Status |
 | :---- | :---- | :---- | :---- | :---- | :---- |
 | \[e.g., Privacy\] | \[e.g., API key visible in code\] | 🔴 Critical | \[e.g., Removed key; added .env.example\] | \[e.g., .env.example\] | ✅ Fixed |
-|  |  |  |  |  |  |
+| Accessibility | Sidebar logo image used empty alt text (`alt=""`) and was hidden from assistive tech (`aria-hidden="true"`), which does not meet the requirement that all images have meaningful alt text. | 🟠 Major | Updated image to meaningful alternative text: `alt="Simmer logo"` and removed `aria-hidden` from the image element. | `src/components/layout/SidePanel.tsx:120` | ✅ Fixed |
+| Accessibility | Relying solely on accessibility-agents for auditing without manual verification. No screen reader testing performed, keyboard navigation not manually verified, and color contrast not manually checked. Risk that automated tools may miss real-world usability issues that only human testing can catch. | 🟠 Major | **Mitigation in progress:** (1) Document reliance on automated tooling as a known limitation. (2) Before final submission, perform manual spot-checks: Tab through all interactive elements, use browser dev tools contrast checker, test at least one flow with VoiceOver/NVDA if available. (3) Add disclaimer in documentation noting accessibility was primarily verified via automated agents. | Risk Log entry; manual testing TBD before submission | 🟡 In Progress |
 |  |  |  |  |  |  |
 |  |  |  |  |  |  |
 
@@ -70,7 +71,7 @@
 
 ### **Accessibility**
 
-* \[ \] All images have meaningful alt text.  
+* \[x\] All images have meaningful alt text.  
 * \[ \] Color contrast meets WCAG AA standards.  
 * \[ \] Keyboard navigation works for interactive elements.
 
@@ -91,4 +92,3 @@
 ---
 
 Part of the \#75HER Challenge | CreateHER Fest 2026 
-
