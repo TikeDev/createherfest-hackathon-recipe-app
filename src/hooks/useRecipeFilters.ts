@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import type { RecipeJSON } from '@/types/recipe'
 
 export type SortField =
@@ -60,10 +60,12 @@ function matchesFilters(recipe: RecipeJSON, filters: FilterState): boolean {
   if (filters.sourceDomain && recipe.sourceDomain !== filters.sourceDomain) return false
 
   // Readiness filter — "Eat Soon" vs "Plan Ahead"
-  if (filters.readiness !== 'all' && recipe.metadata.totalTimeMinutes != null) {
+  // Recipes without time data are excluded when a readiness filter is active
+  if (filters.readiness !== 'all') {
+    if (recipe.metadata.totalTimeMinutes == null) return false
     const t = recipe.metadata.totalTimeMinutes
     if (filters.readiness === 'eat-soon' && t > 45) return false
-    if (filters.readiness === 'plan-ahead' && t <= 120) return false
+    if (filters.readiness === 'plan-ahead' && t < 120) return false
   }
 
   return true
@@ -105,9 +107,9 @@ export function useRecipeFilters(recipes: RecipeJSON[]) {
   const [sortField, setSortField] = useState<SortField>('date-newest')
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS)
 
-  const setFilter = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
+  const setFilter = useCallback(<K extends keyof FilterState>(key: K, value: FilterState[K]) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
-  }
+  }, [])
 
   const resetFilters = () => {
     setQuery('')
