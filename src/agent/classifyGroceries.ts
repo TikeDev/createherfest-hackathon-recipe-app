@@ -43,7 +43,6 @@ export async function classifyGroceries(
 
   const response = await client.chat.completions.create({
     model: 'gpt-5-nano',
-    temperature: 1,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: ingredientList },

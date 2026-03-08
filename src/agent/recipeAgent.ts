@@ -173,7 +173,6 @@ export async function runRecipeAgent(options: RunAgentOptions): Promise<RecipeJS
 
     const response = await client.chat.completions.create({
       model: "gpt-5-nano",
-      temperature: 1,
       messages,
       tools: openAITools,
       tool_choice: "auto",
