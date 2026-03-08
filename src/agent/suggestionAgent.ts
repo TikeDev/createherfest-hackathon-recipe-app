@@ -90,7 +90,7 @@ export async function runSuggestionAgent(
   const response = await client.chat.completions.create({
     model: "gpt-5-nano",
     temperature: 0.4,
-    max_tokens: 400,
+    max_completion_tokens: 400,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: buildUserMessage(energyLabels[energyLevel], note, filtered) },
