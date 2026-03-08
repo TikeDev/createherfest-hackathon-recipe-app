@@ -1,6 +1,6 @@
 # Simmer 🍲
 
-**🔗 [Try the Live Demo](https://createherfest-hackathon-recipe-app.vercel.app/)**
+**🔗 [Try the Live Demo](https://createherfest-hackathon-recipe-app.vercel.app/)** (mobile friendly)
 
 **A React PWA that helps people with physical, cognitive, or temporary limitations find and follow accessible recipes.**
 
