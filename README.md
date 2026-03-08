@@ -1,6 +1,6 @@
 # Simmer 🍲
 
-**🔗 [Try the Live Demo](https://createherfest-hackathon-recipe-app.vercel.app/)** (mobile friendly)
+**🔗 [Try the Live Demo!](https://createherfest-hackathon-recipe-app.vercel.app/)** (mobile friendly)
 
 **A React PWA that helps people with physical, cognitive, or temporary limitations find and follow accessible recipes.**
 
@@ -8,12 +8,13 @@
 
 ## 🧩 Problem Frame
 
-| | | |
-| :---- | :---- |
-| **User** | Individuals with executive functioning challenges who love to cook but want recipes that adapt to their brain's contradictory need for novelty while also providing a structure that simplifies cooking |
-| **Problem** | Choosing recipes according to their changing level of energy/focus and following recipes with complex asynchronous steps |
-| **Constraints** | Time and budget |
-| **Success Test** | Pick a recipe according to energy level and successfully go through all recipe's steps sequentially with the ability to navigate back and forth between steps, with the current step in view while all others are hidden |
+| **User** | Individuals with executive functioning challenges who love to cook but want recipes that adapt to their brain's contradictory need for novelty while also providing a structure that simplifies cooking
+
+| **Problem** | Choosing recipes according to their changing level of energy/focus and following recipes with complex asynchronous steps
+
+| **Constraints** | Time and budget
+
+| **Success Test** | Pick a recipe according to energy level and successfully go through all recipe's steps sequentially with the ability to navigate back and forth between steps, with the current step in view while all others are hidden
 
 ---
 
@@ -27,6 +28,8 @@
 ---
 
 ## 🚀 Quick Start & Demo Path
+
+**[Live Deployment](https://createherfest-hackathon-recipe-app.vercel.app/)** (mobile friendly)
 
 ### Installation (1 Command)
 
@@ -68,14 +71,14 @@ Add your `VITE_OPENAI_API_KEY` to `.env`, then open **http://localhost:5173** in
 
 ## 📋 Project Logs & Documentation
 
-| Log Type | Purpose | Link to Documentation |
-| :---- | :---- | :---- |
-| **Decision Log** | Technical choices & tradeoffs | [docs/DECISION_LOG.md](docs/DECISION_LOG.md) |
-| **Risk Log** | Issues identified & fixed | [docs/RISK_LOG.md](docs/RISK_LOG.md) |
-| **Evidence Log** | Sources, assets & attributions | [docs/EVIDENCE_LOG.md](docs/EVIDENCE_LOG.md) |
-| **MVP Spec** | Full feature spec, data types, APIs, 16 acceptance criteria | [docs/plans/Initial_MVP_Plan.md](docs/plans/Initial_MVP_Plan.md) |
-| **Extraction Agent Plan** | Agent pipeline, tools, output format, offline queue | [docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md](docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md) |
-| **Architecture Diagrams** | Mermaid flow diagrams for the full system | [docs/plans/Plan_Overview_Diagram.md](docs/plans/Plan_Overview_Diagram.md) |
+| Log Type                  | Purpose                                                     | Link to Documentation                                                                    |
+| :------------------------ | :---------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| **Decision Log**          | Technical choices & tradeoffs                               | [docs/DECISION_LOG.md](docs/DECISION_LOG.md)                                             |
+| **Risk Log**              | Issues identified & fixed                                   | [docs/RISK_LOG.md](docs/RISK_LOG.md)                                                     |
+| **Evidence Log**          | Sources, assets & attributions                              | [docs/EVIDENCE_LOG.md](docs/EVIDENCE_LOG.md)                                             |
+| **MVP Spec**              | Full feature spec, data types, APIs, 16 acceptance criteria | [docs/plans/Initial_MVP_Plan.md](docs/plans/Initial_MVP_Plan.md)                         |
+| **Extraction Agent Plan** | Agent pipeline, tools, output format, offline queue         | [docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md](docs/plans/PLAN-RECIPE_EXTRACTION_AGENT.md) |
+| **Architecture Diagrams** | Mermaid flow diagrams for the full system                   | [docs/plans/Plan_Overview_Diagram.md](docs/plans/Plan_Overview_Diagram.md)               |
 
 ---
 
@@ -93,11 +96,11 @@ Add your `VITE_OPENAI_API_KEY` to `.env`, then open **http://localhost:5173** in
 
 **Team Name:** Spice Studio
 
-| Name | Role | GitHub | LinkedIn |
-| :---- | :---- | :---- | :---- |
-| Kerline Moncy | Lead Developer and DevOps Engineer | @TikeDev | https://www.linkedin.com/in/kerline-moncy/ |
-| Paula Bass Werner | Technical Product Manager | @pbasswerner | https://www.linkedin.com/in/paula-bass-werner/ |
-| Rahul Basu | System Architecture and AI Consultant | @EruditeStranger | https://www.linkedin.com/in/rahul-basu-238a18100/ |
+| Name              | Role                                  | GitHub           | LinkedIn                                          |
+| :---------------- | :------------------------------------ | :--------------- | :------------------------------------------------ |
+| Kerline Moncy     | Lead Developer and DevOps Engineer    | @TikeDev         | https://www.linkedin.com/in/kerline-moncy/        |
+| Paula Bass Werner | Technical Product Manager             | @pbasswerner     | https://www.linkedin.com/in/paula-bass-werner/    |
+| Rahul Basu        | System Architecture and AI Consultant | @EruditeStranger | https://www.linkedin.com/in/rahul-basu-238a18100/ |
 
 **Special thanks to:** CreateHER Fest and the #75HER Challenge organizers.
 
