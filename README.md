@@ -8,7 +8,7 @@
 
 ## 🧩 Problem Frame
 
-| | |
+| | | |
 | :---- | :---- |
 | **User** | Individuals with executive functioning challenges who love to cook but want recipes that adapt to their brain's contradictory need for novelty while also providing a structure that simplifies cooking |
 | **Problem** | Choosing recipes according to their changing level of energy/focus and following recipes with complex asynchronous steps |
