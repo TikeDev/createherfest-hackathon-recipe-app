@@ -42,10 +42,12 @@ export default function Extract() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-xl mx-auto px-4 pt-4 pb-8 space-y-6 md:py-8">
       <div>
-        <h1 className="text-2xl font-headline text-forest">Add a Recipe</h1>
-        <p className="mt-1 text-sm text-forest/60">
+        <h1 className="pl-14 text-left text-2xl font-headline text-forest md:pl-0">
+          Add a Recipe
+        </h1>
+        <p className="mt-1 pl-14 text-left text-sm text-forest/60 md:pl-0">
           Import from a URL or paste recipe text. The AI will extract and structure it for you.
         </p>
       </div>

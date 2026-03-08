@@ -105,17 +105,19 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-headline text-forest dark:text-cream-text">
+    <div className="max-w-2xl mx-auto px-4 pt-4 pb-8 space-y-6 md:py-8">
+      <div className="space-y-3 md:flex md:items-center md:justify-between md:space-y-0">
+        <h1 className="pl-14 text-left text-2xl font-headline text-forest dark:text-cream-text md:pl-0">
           {hasSession ? "Here's what we found." : "My Recipes"}
         </h1>
-        <Link
-          to="/extract"
-          className="rounded-lg bg-sage px-4 py-2 text-sm font-semibold text-white hover:bg-sage-dark focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 transition-colors"
-        >
-          + Add Recipe
-        </Link>
+        <div className="flex justify-end">
+          <Link
+            to="/extract"
+            className="rounded-lg bg-sage px-4 py-2 text-sm font-semibold text-white hover:bg-sage-dark focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2 transition-colors"
+          >
+            + Add Recipe
+          </Link>
+        </div>
       </div>
 
       {/* Session context banner */}

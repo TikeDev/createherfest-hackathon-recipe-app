@@ -47,20 +47,22 @@ export default function RecipeDetail() {
   });
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-2xl mx-auto px-4 pt-4 pb-8 space-y-8 md:py-8">
       {/* Header */}
       <div>
         <button
           onClick={() => {
             void navigate(-1);
           }}
-          className="text-sm text-sage hover:underline mb-4 block"
+          className="mb-4 block pl-14 text-sm text-sage hover:underline md:pl-0"
           aria-label="Go back"
         >
           ← Back
         </button>
-        <h1 className="text-2xl font-headline text-forest">{recipe.title}</h1>
-        <div className="mt-1 flex flex-wrap gap-3 text-xs text-forest/60">
+        <h1 className="pl-14 text-left text-2xl font-headline text-forest md:pl-0">
+          {recipe.title}
+        </h1>
+        <div className="mt-1 flex flex-wrap justify-start gap-3 pl-14 text-xs text-forest/60 md:pl-0">
           {recipe.sourceDomain && <span>From {recipe.sourceDomain}</span>}
           <span>Saved {extractedDate}</span>
           {recipe.metadata.totalTimeMinutes && (

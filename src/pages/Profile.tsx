@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
 import { handleRadioKeyDown } from "@/utils/a11y";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ALARM_SOUNDS } from "@/constants/alarmSounds";
 import { ShieldAlert, Accessibility, ChefHat, Bell, Clock, ArrowLeft, Check } from "lucide-react";
 import { saveCustomAlarm, deleteCustomAlarm } from "@/storage/customAlarms";
@@ -235,7 +244,7 @@ export default function Profile() {
 
   if (loading || !profile) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-4 pt-4 pb-8 md:py-8">
         <p className="text-sm text-forest/60 dark:text-cream-text/60" role="status">
           Loading profile...
         </p>
@@ -250,6 +259,7 @@ export default function Profile() {
       if (result.success) {
         update({
           customAlarmUploaded: true,
+          customAlarmId: "custom-alarm",
           alarmSoundId: "custom",
         });
       } else {
@@ -265,6 +275,7 @@ export default function Profile() {
       await deleteCustomAlarm();
       update({
         customAlarmUploaded: false,
+        customAlarmId: undefined,
         alarmSoundId: "moderate",
       });
     } catch (err) {
@@ -280,11 +291,13 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-2xl mx-auto px-4 pt-4 pb-8 space-y-6 md:py-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-headline text-forest dark:text-cream-text">My Profile</h1>
-        <div className="flex items-center gap-3">
+      <div className="space-y-3 md:flex md:items-center md:justify-between md:space-y-0">
+        <h1 className="pl-14 text-left text-2xl font-headline text-forest dark:text-cream-text md:pl-0">
+          My Profile
+        </h1>
+        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => void discard()}
@@ -426,111 +439,151 @@ export default function Profile() {
 
       {/* Section 4: Cooking Timer Alarms */}
       <Section title="Cooking Timer Alarms" icon={<Bell size={20} aria-hidden="true" />}>
-        {/* Alarm Sound Selection */}
         <fieldset className="space-y-2">
           <legend className="text-sm font-semibold text-forest dark:text-cream-text">
-            Alarm Sound
+            Timer alarms
           </legend>
-          <select
-            value={profile.alarmSoundId}
-            onChange={(e) => update({ alarmSoundId: e.target.value })}
-            className="w-full rounded-lg border border-mist-pale bg-surface px-3 py-2 text-sm text-forest focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage dark:text-cream-text dark:border-forest dark:focus:border-sage"
-            aria-label="Select alarm sound"
-          >
-            {Object.entries(ALARM_SOUNDS).map(([id, sound]) => (
-              <option key={id} value={id}>
-                {sound.label} — {sound.description}
-              </option>
-            ))}
-            {profile.customAlarmUploaded && <option value="custom">Custom Sound</option>}
-          </select>
-        </fieldset>
-
-        {/* Volume Slider */}
-        <fieldset className="space-y-2">
-          <legend className="text-sm font-semibold text-forest dark:text-cream-text">
-            Volume: {profile.alarmVolume}%
-          </legend>
-          <Slider
-            value={[profile.alarmVolume ?? 70]}
-            onValueChange={(values) => update({ alarmVolume: values[0] })}
-            min={0}
-            max={100}
-            step={5}
-            className="w-full max-w-md"
-            aria-label="Alarm volume"
-          />
-          <div className="flex max-w-md justify-between text-xs text-forest/50 dark:text-cream-text/50">
-            <span>0%</span>
-            <span>50%</span>
-            <span>100%</span>
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-mist-pale bg-surface px-3 py-2 dark:border-forest">
+            <label
+              id="timer-alarms-enabled-label"
+              className="text-sm text-forest dark:text-cream-text"
+            >
+              Enable alarm when a cooking timer ends
+            </label>
+            <Switch
+              checked={profile.alarmEnabled ?? true}
+              onCheckedChange={(checked) => update({ alarmEnabled: checked })}
+              aria-labelledby="timer-alarms-enabled-label"
+            />
           </div>
         </fieldset>
 
-        {/* Visual Alarm Toggle */}
-        <fieldset className="space-y-2">
-          <legend className="text-sm font-semibold text-forest dark:text-cream-text">
-            Visual Alarm
-          </legend>
-          <label className="flex items-center gap-2 text-sm text-forest dark:text-cream-text">
-            <input
-              type="checkbox"
-              checked={profile.visualAlarmEnabled}
-              onChange={(e) => update({ visualAlarmEnabled: e.target.checked })}
-              className="rounded border-mist-pale text-sage focus:ring-2 focus:ring-sage focus:ring-offset-2"
+        <div
+          className={`${profile.alarmEnabled === false ? "opacity-60" : ""} space-y-6`}
+          aria-disabled={profile.alarmEnabled === false}
+        >
+          {/* Alarm Sound Selection */}
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-semibold text-forest dark:text-cream-text">
+              Alarm Sound
+            </legend>
+            <Select
+              value={profile.alarmSoundId ?? "moderate"}
+              onValueChange={(value) => update({ alarmSoundId: value })}
+              disabled={profile.alarmEnabled === false}
+            >
+              <SelectTrigger id="alarm-sound" className="w-full">
+                <SelectValue placeholder="Select alarm sound" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {Object.entries(ALARM_SOUNDS).map(([id, sound]) => (
+                    <SelectItem key={id} value={id}>
+                      {sound.label} — {sound.description}
+                    </SelectItem>
+                  ))}
+                  {profile.customAlarmUploaded && (
+                    <SelectItem value="custom">Custom Sound</SelectItem>
+                  )}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </fieldset>
+
+          {/* Volume Slider */}
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-semibold text-forest dark:text-cream-text">
+              Volume: {profile.alarmVolume}%
+            </legend>
+            <Slider
+              value={[profile.alarmVolume ?? 70]}
+              onValueChange={(values) => update({ alarmVolume: values[0] })}
+              min={0}
+              max={100}
+              step={5}
+              disabled={profile.alarmEnabled === false}
+              className="w-full max-w-md"
+              aria-label="Alarm volume"
             />
-            Screen flash for deaf/hard of hearing
-          </label>
-        </fieldset>
+            <div className="flex max-w-md justify-between text-xs text-forest/50 dark:text-cream-text/50">
+              <span>0%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
+          </fieldset>
 
-        {/* Custom Alarm Upload */}
-        <fieldset className="space-y-2">
-          <legend className="text-sm font-semibold text-forest dark:text-cream-text">
-            Custom Alarm Sound
-          </legend>
-          <p className="text-xs text-forest/60 dark:text-cream-text/60">
-            Upload your own alarm sound (MP3, WAV, OGG, or M4A, max 2MB, max 10 seconds)
-          </p>
+          {/* Visual Alarm Toggle */}
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-semibold text-forest dark:text-cream-text">
+              Visual Alarm
+            </legend>
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-mist-pale bg-surface px-3 py-2 dark:border-forest">
+              <label
+                id="visual-alarm-enabled-label"
+                className="text-sm text-forest dark:text-cream-text"
+              >
+                Screen flash for deaf/hard of hearing
+              </label>
+              <Switch
+                checked={profile.visualAlarmEnabled ?? false}
+                onCheckedChange={(checked) => update({ visualAlarmEnabled: checked })}
+                disabled={profile.alarmEnabled === false}
+                aria-labelledby="visual-alarm-enabled-label"
+              />
+            </div>
+          </fieldset>
 
-          {!profile.customAlarmUploaded ? (
-            <div>
-              <input
-                type="file"
-                accept="audio/mp3,audio/mpeg,audio/wav,audio/ogg,audio/m4a,audio/x-m4a"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) void handleCustomAlarmUpload(file);
-                }}
-                className="block w-full text-sm text-forest dark:text-cream-text
+          {/* Custom Alarm Upload */}
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-semibold text-forest dark:text-cream-text">
+              Custom Alarm Sound
+            </legend>
+            <p className="text-xs text-forest/60 dark:text-cream-text/60">
+              Upload your own alarm sound (MP3, WAV, OGG, or M4A, max 2MB, max 10 seconds)
+            </p>
+
+            {!profile.customAlarmUploaded ? (
+              <div>
+                <input
+                  type="file"
+                  accept="audio/mp3,audio/mpeg,audio/wav,audio/ogg,audio/m4a,audio/x-m4a"
+                  disabled={profile.alarmEnabled === false}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) void handleCustomAlarmUpload(file);
+                  }}
+                  className="block w-full text-sm text-forest dark:text-cream-text
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-lg file:border-0
                   file:text-sm file:font-semibold
                   file:bg-sage file:text-white
                   hover:file:bg-sage-dark
                   file:cursor-pointer cursor-pointer"
-              />
-              {uploadError && (
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1" role="alert">
-                  {uploadError}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="flex items-center justify-between rounded-lg border border-mist-pale bg-surface px-3 py-2 dark:border-forest">
-              <span className="text-sm text-forest dark:text-cream-text flex items-center gap-2">
-                <span aria-hidden="true">🔔</span>
-                Custom alarm uploaded
-              </span>
-              <button
-                type="button"
-                onClick={() => void handleCustomAlarmDelete()}
-                className="text-xs text-red-600 hover:text-red-700 font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded px-2 py-1"
-              >
-                Remove
-              </button>
-            </div>
-          )}
-        </fieldset>
+                />
+                {uploadError && (
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-1" role="alert">
+                    {uploadError}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center justify-between rounded-lg border border-mist-pale bg-surface px-3 py-2 dark:border-forest">
+                <span className="text-sm text-forest dark:text-cream-text flex items-center gap-2">
+                  <span aria-hidden="true">🔔</span>
+                  Custom alarm uploaded
+                </span>
+                <button
+                  type="button"
+                  disabled={profile.alarmEnabled === false}
+                  onClick={() => void handleCustomAlarmDelete()}
+                  className="text-xs text-red-600 hover:text-red-700 font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded px-2 py-1"
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </fieldset>
+        </div>
       </Section>
 
       {/* Section 5: Time & Budget */}

@@ -16,6 +16,12 @@ const DEFAULT_PROFILE: Omit<UserProfile, "id" | "createdAt" | "updatedAt"> = {
   cognitiveLoad: "medium",
   timePreferenceMinutes: undefined,
   budgetLevel: undefined,
+  alarmEnabled: true,
+  alarmSoundId: "moderate",
+  alarmVolume: 70,
+  visualAlarmEnabled: false,
+  customAlarmId: undefined,
+  customAlarmUploaded: false,
 };
 
 function createNewProfile(): UserProfile {

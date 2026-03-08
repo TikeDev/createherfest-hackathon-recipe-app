@@ -7,8 +7,10 @@ import { classifyGroceries } from "../agent/classifyGroceries";
 import ThemeToggle from "../components/ui/ThemeToggle";
 import { Icon } from "@/components/ui/icon";
 import { useViewPreferences } from "@/contexts/ViewPreferencesContext";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useProfile } from "@/hooks/useProfile";
 import { playAlarm, stopAlarm } from "@/utils/alarm";
+import type { AlarmPlayback, AlarmSettings } from "@/utils/alarm";
 import { VisualAlarm } from "@/components/ui/VisualAlarm";
 import {
   ShoppingCart,
@@ -174,81 +176,96 @@ const STAGES: { key: Stage; label: string }[] = [
   { key: "serve", label: "Serve" },
 ];
 
-const StageBar = ({ current }: { current: Stage }) => {
+const StageBar = ({ current, isCompact = false }: { current: Stage; isCompact?: boolean }) => {
   const currentIdx = STAGES.findIndex((s) => s.key === current);
   return (
     <nav
       aria-label="Cooking stages"
       style={{
-        padding: "14px 48px",
+        padding: isCompact ? "10px 12px" : "14px 48px",
         backgroundColor: "var(--card)",
         borderBottom: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",
+        overflowX: isCompact ? "auto" : "visible",
+        WebkitOverflowScrolling: "touch",
       }}
     >
-      {STAGES.map((s, i) => (
-        <div
-          key={s.key}
-          aria-current={i === currentIdx ? "step" : undefined}
-          style={{ display: "flex", alignItems: "center", flex: i < 4 ? 1 : 0 }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div
-              aria-hidden="true"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 15,
-                backgroundColor:
-                  i === currentIdx
-                    ? "var(--color-sage)"
-                    : i < currentIdx
-                      ? "var(--color-mist)"
-                      : "var(--color-mist-pale)",
-                border:
-                  i === currentIdx ? "2px solid var(--color-sage-dark)" : "2px solid transparent",
-                transition: "all 0.25s",
-              }}
-            >
-              <Icon icon={STAGE_ICONS[s.key]} size="sm" decorative />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          minWidth: isCompact ? "max-content" : undefined,
+          gap: isCompact ? 14 : 0,
+        }}
+      >
+        {STAGES.map((s, i) => (
+          <div
+            key={s.key}
+            aria-current={i === currentIdx ? "step" : undefined}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flex: isCompact ? "0 0 auto" : i < 4 ? 1 : 0,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: isCompact ? 8 : 6 }}>
+              <div
+                aria-hidden="true"
+                style={{
+                  width: isCompact ? 30 : 34,
+                  height: isCompact ? 30 : 34,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 15,
+                  backgroundColor:
+                    i === currentIdx
+                      ? "var(--color-sage)"
+                      : i < currentIdx
+                        ? "var(--color-mist)"
+                        : "var(--color-mist-pale)",
+                  border:
+                    i === currentIdx ? "2px solid var(--color-sage-dark)" : "2px solid transparent",
+                  transition: "all 0.25s",
+                }}
+              >
+                <Icon icon={STAGE_ICONS[s.key]} size="sm" decorative />
+              </div>
+              <span
+                style={{
+                  fontSize: isCompact ? 13 : 14,
+                  fontWeight: i === currentIdx ? 800 : 500,
+                  whiteSpace: "nowrap",
+                  color:
+                    i === currentIdx
+                      ? "var(--color-sage)"
+                      : i < currentIdx
+                        ? "var(--color-mist)"
+                        : "var(--muted-foreground)",
+                }}
+              >
+                {s.label}
+              </span>
             </div>
-            <span
-              style={{
-                fontSize: 14,
-                fontWeight: i === currentIdx ? 800 : 500,
-                whiteSpace: "nowrap",
-                color:
-                  i === currentIdx
-                    ? "var(--color-sage)"
-                    : i < currentIdx
-                      ? "var(--color-mist)"
-                      : "var(--muted-foreground)",
-              }}
-            >
-              {s.label}
-            </span>
+            {!isCompact && i < 4 && (
+              <div
+                style={{
+                  flex: 1,
+                  height: 2,
+                  margin: "0 10px",
+                  backgroundColor: i < currentIdx ? "var(--color-mist)" : "var(--color-mist-pale)",
+                }}
+              />
+            )}
           </div>
-          {i < 4 && (
-            <div
-              style={{
-                flex: 1,
-                height: 2,
-                margin: "0 10px",
-                backgroundColor: i < currentIdx ? "var(--color-mist)" : "var(--color-mist-pale)",
-              }}
-            />
-          )}
-        </div>
-      ))}
+        ))}
+      </div>
     </nav>
   );
 };
-
 // ─── Step layout (shared for preprep/prep/cook) ──────────────────
 const StepLayout = ({
   icon: IconComponent,
@@ -257,6 +274,8 @@ const StepLayout = ({
   stepContent,
   progressBar,
   sidebar,
+  isMobile = false,
+  compactMobile = false,
 }: {
   icon: LucideIcon;
   title: string;
@@ -264,15 +283,23 @@ const StepLayout = ({
   stepContent: React.ReactNode;
   progressBar?: React.ReactNode;
   sidebar: React.ReactNode;
+  isMobile?: boolean;
+  compactMobile?: boolean;
 }) => (
-  <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 40 }}>
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : "1fr 320px",
+      gap: isMobile ? (compactMobile ? 16 : 24) : 40,
+    }}
+  >
     <div>
       <div
         style={{
           fontSize: 14,
           fontWeight: 600,
           color: "var(--muted-foreground)",
-          marginBottom: 20,
+          marginBottom: isMobile && compactMobile ? 12 : 20,
           textTransform: "uppercase",
           letterSpacing: 1.2,
         }}
@@ -282,14 +309,30 @@ const StepLayout = ({
       {stepContent}
       {progressBar}
     </div>
-    <div style={{ position: "sticky", top: 130, alignSelf: "start" }}>
-      <Card style={{ textAlign: "center", marginBottom: 16, padding: 36 }}>
+    <div
+      style={{
+        position: isMobile ? "static" : "sticky",
+        top: isMobile ? 0 : 130,
+        alignSelf: "start",
+      }}
+    >
+      <Card
+        style={{
+          textAlign: "center",
+          marginBottom: isMobile && compactMobile ? 10 : 16,
+          padding: isMobile ? (compactMobile ? 16 : 24) : 36,
+        }}
+      >
         <div style={{ marginBottom: 10, display: "flex", justifyContent: "center" }}>
-          <Icon icon={IconComponent} decorative className="text-sage w-14 h-14" />
+          <Icon
+            icon={IconComponent}
+            decorative
+            className={isMobile && compactMobile ? "text-sage w-10 h-10" : "text-sage w-14 h-14"}
+          />
         </div>
         <div
           style={{
-            fontSize: 20,
+            fontSize: isMobile ? (compactMobile ? 16 : 18) : 20,
             fontWeight: 800,
             fontFamily: "'Lora', serif",
             color: "var(--foreground)",
@@ -322,10 +365,12 @@ function GroceriesStage({
   recipe,
   onNext,
   onBack,
+  isMobile = false,
 }: {
   recipe: RecipeJSON;
   onNext: () => void;
   onBack: () => void;
+  isMobile?: boolean;
 }) {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [categories, setCategories] = useState<Record<string, GroceryCategory> | null>(null);
@@ -405,7 +450,7 @@ function GroceriesStage({
         display: "flex",
         alignItems: "center",
         gap: 16,
-        padding: "18px 24px",
+        padding: isMobile ? "16px 14px" : "18px 24px",
         cursor: "pointer",
         opacity: checked[ing.id] ? 0.4 : 1,
         transition: "all 0.2s",
@@ -450,12 +495,18 @@ function GroceriesStage({
   );
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 36 }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: isMobile ? "1fr" : "1fr 300px",
+        gap: isMobile ? 24 : 36,
+      }}
+    >
       <div>
         <div style={{ marginBottom: 28 }}>
           <h2
             style={{
-              fontSize: 28,
+              fontSize: isMobile ? 32 : 28,
               fontFamily: "'Lora', serif",
               fontWeight: 700,
               color: "var(--foreground)",
@@ -543,7 +594,13 @@ function GroceriesStage({
           </>
         )}
       </div>
-      <div style={{ position: "sticky", top: 130, alignSelf: "start" }}>
+      <div
+        style={{
+          position: isMobile ? "static" : "sticky",
+          top: isMobile ? 0 : 130,
+          alignSelf: "start",
+        }}
+      >
         <Card style={{ marginBottom: 16 }}>
           <SectionLabel>Progress</SectionLabel>
           <div
@@ -599,12 +656,14 @@ function StepStage({
   steps,
   onNext,
   onBack,
+  isMobile = false,
 }: {
   icon: LucideIcon;
   title: string;
   steps: Step[];
   onNext: () => void;
   onBack: () => void;
+  isMobile?: boolean;
 }) {
   const [idx, setIdx] = useState(0);
   const [tipOpen, setTipOpen] = useState(false);
@@ -637,13 +696,15 @@ function StepStage({
       icon={icon}
       title={title}
       stepLabel={`Step ${idx + 1} of ${steps.length}`}
+      isMobile={isMobile}
+      compactMobile
       stepContent={
         <div>
-          <Card style={{ padding: 44, marginBottom: 14 }}>
+          <Card style={{ padding: isMobile ? 16 : 44, marginBottom: isMobile ? 10 : 14 }}>
             <p
               style={{
-                fontSize: 22,
-                lineHeight: 1.9,
+                fontSize: isMobile ? 17 : 22,
+                lineHeight: isMobile ? 1.7 : 1.9,
                 color: "var(--foreground)",
                 fontFamily: "'Lora', serif",
                 margin: 0,
@@ -654,17 +715,17 @@ function StepStage({
             {step.isCritical && step.criticalNote && (
               <div
                 style={{
-                  marginTop: 16,
+                  marginTop: isMobile ? 12 : 16,
                   backgroundColor: "var(--destructive)",
                   borderRadius: 10,
-                  padding: "12px 16px",
-                  fontSize: 15,
+                  padding: isMobile ? "10px 12px" : "12px 16px",
+                  fontSize: isMobile ? 14 : 15,
                   fontWeight: 600,
                   color: "white",
                   display: "flex",
                   alignItems: "flex-start",
                   gap: 8,
-                  lineHeight: 1.5,
+                  lineHeight: isMobile ? 1.4 : 1.5,
                 }}
               >
                 <Icon icon={AlertTriangle} size="sm" decorative className="flex-shrink-0 mt-0.5" />{" "}
@@ -680,7 +741,7 @@ function StepStage({
                   backgroundColor: "transparent",
                   border: "1.5px solid var(--color-mist)",
                   borderRadius: 10,
-                  padding: "11px 18px",
+                  padding: isMobile ? "10px 14px" : "11px 18px",
                   fontSize: 13,
                   color: "var(--color-sage)",
                   fontWeight: 700,
@@ -689,6 +750,7 @@ function StepStage({
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
+                  minHeight: 44,
                 }}
               >
                 <Icon icon={Lightbulb} size="sm" decorative />
@@ -719,7 +781,7 @@ function StepStage({
         <div
           role="group"
           aria-label={`Step ${idx + 1} of ${steps.length}`}
-          style={{ display: "flex", gap: 8, marginTop: 20 }}
+          style={{ display: "flex", gap: 8, marginTop: isMobile ? 12 : 20 }}
         >
           {steps.map((_, i) => (
             <button
@@ -747,7 +809,7 @@ function StepStage({
       sidebar={
         <>
           <Btn onClick={handleNext}>{isLast ? "Done · Next stage →" : "Done · Next step →"}</Btn>
-          <div style={{ marginTop: 10 }}>
+          <div style={{ marginTop: isMobile ? 8 : 10 }}>
             <Btn variant="secondary" onClick={handleBack}>
               ← Back
             </Btn>
@@ -790,7 +852,7 @@ function CircularTimer({
   return (
     <Card
       style={{
-        padding: 28,
+        padding: "18px 28px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -954,17 +1016,19 @@ function CookStage({
   steps,
   onNext,
   onBack,
+  isMobile = false,
 }: {
   steps: Step[];
   onNext: () => void;
   onBack: () => void;
+  isMobile?: boolean;
 }) {
   const [idx, setIdx] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
   const [timerPaused, setTimerPaused] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [timerDone, setTimerDone] = useState(false);
-  const [alarmAudio, setAlarmAudio] = useState<HTMLAudioElement | null>(null);
+  const [alarmAudio, setAlarmAudio] = useState<AlarmPlayback | null>(null);
   const [showVisualAlarm, setShowVisualAlarm] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { profile } = useProfile();
@@ -984,12 +1048,18 @@ function CookStage({
           clearTimer();
           setTimerActive(false);
           setTimerDone(true);
+          const alarmSettings: AlarmSettings = {
+            alarmEnabled: profile?.alarmEnabled ?? true,
+            alarmSoundId: profile?.alarmSoundId,
+            alarmVolume: profile?.alarmVolume,
+            customAlarmUploaded: profile?.customAlarmUploaded,
+          };
           // Trigger alarm when timer completes
-          if (profile?.alarmEnabled) {
-            void playAlarm(profile).then((audio) => {
+          if (alarmSettings.alarmEnabled !== false) {
+            void playAlarm(alarmSettings).then((audio) => {
               setAlarmAudio(audio);
             });
-            if (profile.visualAlarmEnabled) {
+            if (profile?.visualAlarmEnabled) {
               setShowVisualAlarm(true);
             }
           }
@@ -1001,6 +1071,7 @@ function CookStage({
   };
 
   const startTimer = (seconds: number) => {
+    dismissAlarm();
     setTimeLeft(seconds);
     setTimerActive(true);
     setTimerPaused(false);
@@ -1044,8 +1115,14 @@ function CookStage({
     resetTimerState();
   }, [idx]);
 
-  // Cleanup on unmount
-  useEffect(() => () => clearTimer(), []);
+  // Cleanup timer and alarm on unmount
+  useEffect(
+    () => () => {
+      clearTimer();
+      stopAlarm(alarmAudio);
+    },
+    [alarmAudio]
+  );
 
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
   const timerStarted = timerActive || timerPaused || timerDone;
@@ -1058,12 +1135,13 @@ function CookStage({
         icon={Flame}
         title="Cook"
         stepLabel={`Step ${idx + 1} of ${steps.length}`}
+        isMobile={isMobile}
         stepContent={
           <div>
-            <Card style={{ padding: 44, marginBottom: 16 }}>
+            <Card style={{ padding: isMobile ? 24 : 44, marginBottom: 16 }}>
               <p
                 style={{
-                  fontSize: 22,
+                  fontSize: isMobile ? 19 : 22,
                   lineHeight: 1.9,
                   color: "var(--foreground)",
                   fontFamily: "'Lora', serif",
@@ -1090,6 +1168,8 @@ function CookStage({
                   display: "flex",
                   alignItems: "center",
                   gap: 10,
+                  width: isMobile ? "100%" : undefined,
+                  justifyContent: isMobile ? "center" : "flex-start",
                 }}
               >
                 <Icon icon={Timer} size="md" decorative /> Start Timer · {fmt(timerSeconds)}
@@ -1185,22 +1265,31 @@ function ServeStage({
   recipe,
   onComplete,
   onBack,
+  isMobile = false,
 }: {
   recipe: RecipeJSON;
   onComplete: () => void;
   onBack: () => void;
+  isMobile?: boolean;
 }) {
   const [rating, setRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", textAlign: "center", paddingTop: 48 }}>
+    <div
+      style={{
+        maxWidth: 640,
+        margin: "0 auto",
+        textAlign: "center",
+        paddingTop: isMobile ? 20 : 48,
+      }}
+    >
       <div style={{ marginBottom: 20, display: "flex", justifyContent: "center" }}>
         <Icon icon={UtensilsCrossed} decorative className="text-sage w-20 h-20" />
       </div>
       <h2
         style={{
-          fontSize: 38,
+          fontSize: isMobile ? 32 : 38,
           fontFamily: "'Lora', serif",
           fontWeight: 700,
           color: "var(--foreground)",
@@ -1229,7 +1318,13 @@ function ServeStage({
           <div
             role="radiogroup"
             aria-label="Complexity rating"
-            style={{ display: "flex", justifyContent: "center", gap: 14, marginBottom: 14 }}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: isMobile ? 8 : 14,
+              marginBottom: 14,
+              flexWrap: "wrap",
+            }}
           >
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -1239,8 +1334,8 @@ function ServeStage({
                 aria-label={`${n} out of 5 stars`}
                 onClick={() => setRating(n)}
                 style={{
-                  width: 54,
-                  height: 54,
+                  width: isMobile ? 48 : 54,
+                  height: isMobile ? 48 : 54,
                   borderRadius: 14,
                   border: "none",
                   backgroundColor: rating >= n ? "var(--color-sage)" : "var(--color-mist-pale)",
@@ -1293,7 +1388,14 @@ function ServeStage({
         </Card>
       )}
 
-      <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 14,
+          justifyContent: "center",
+          flexDirection: isMobile ? "column" : "row",
+        }}
+      >
         <button
           onClick={onBack}
           style={{
@@ -1305,6 +1407,7 @@ function ServeStage({
             fontWeight: 700,
             cursor: "pointer",
             fontSize: 14,
+            width: isMobile ? "100%" : undefined,
           }}
         >
           ← Back
@@ -1320,6 +1423,7 @@ function ServeStage({
             fontWeight: 700,
             cursor: "pointer",
             fontSize: 14,
+            width: isMobile ? "100%" : undefined,
           }}
         >
           Cook something else →
@@ -1338,6 +1442,7 @@ interface Props {
 
 export function CookingMode({ recipe, onComplete, onBack }: Props) {
   const [stage, setStage] = useState<Stage>("groceries");
+  const isMobile = useMediaQuery("(max-width: 900px)");
   // Access view preferences to ensure theme context is connected
   useViewPreferences();
 
@@ -1348,7 +1453,12 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
 
   const stageContent: Record<Stage, React.ReactNode> = {
     groceries: (
-      <GroceriesStage recipe={recipe} onNext={() => setStage("preprep")} onBack={onBack} />
+      <GroceriesStage
+        recipe={recipe}
+        onNext={() => setStage("preprep")}
+        onBack={onBack}
+        isMobile={isMobile}
+      />
     ),
     preprep:
       prePrepSteps.length > 0 ? (
@@ -1358,6 +1468,7 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
           steps={prePrepSteps}
           onNext={() => setStage("prep")}
           onBack={() => setStage("groceries")}
+          isMobile={isMobile}
         />
       ) : null,
     prep: (
@@ -1367,6 +1478,7 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
         steps={prepSteps}
         onNext={() => setStage("cook")}
         onBack={() => setStage(prePrepSteps.length > 0 ? "preprep" : "groceries")}
+        isMobile={isMobile}
       />
     ),
     cook: (
@@ -1374,9 +1486,17 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
         steps={cookSteps}
         onNext={() => setStage("serve")}
         onBack={() => setStage("prep")}
+        isMobile={isMobile}
       />
     ),
-    serve: <ServeStage recipe={recipe} onComplete={onComplete} onBack={() => setStage("cook")} />,
+    serve: (
+      <ServeStage
+        recipe={recipe}
+        onComplete={onComplete}
+        onBack={() => setStage("cook")}
+        isMobile={isMobile}
+      />
+    ),
   };
 
   // Auto-skip preprep if no critical steps
@@ -1413,7 +1533,7 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
         style={{
           backgroundColor: "var(--card)",
           borderBottom: "1px solid var(--border)",
-          padding: "0 48px",
+          padding: isMobile ? "0 14px" : "0 48px",
           height: 64,
           display: "flex",
           alignItems: "center",
@@ -1428,7 +1548,7 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
           <Icon icon={Leaf} size="lg" decorative className="text-sage" />
           <span
             style={{
-              fontSize: 20,
+              fontSize: isMobile ? 18 : 20,
               fontWeight: 900,
               color: "var(--foreground)",
               fontFamily: "'Lora', Georgia, serif",
@@ -1446,24 +1566,30 @@ export function CookingMode({ recipe, onComplete, onBack }: Props) {
               border: "none",
               cursor: "pointer",
               color: "var(--color-sage)",
-              fontSize: 14,
+              fontSize: isMobile ? 13 : 14,
               fontWeight: 700,
               fontFamily: "'Nunito', sans-serif",
               display: "flex",
               alignItems: "center",
-              gap: 6,
+              gap: isMobile ? 4 : 6,
             }}
           >
-            <Icon icon={X} size="sm" decorative /> Exit cooking mode
+            <Icon icon={X} size="sm" decorative /> {isMobile ? "Exit" : "Exit cooking mode"}
           </button>
         </div>
       </nav>
 
       {/* Stage bar */}
-      <StageBar current={stage} />
+      <StageBar current={stage} isCompact={isMobile} />
 
       {/* Content */}
-      <div style={{ maxWidth: 1060, margin: "0 auto", padding: "44px 48px 80px" }}>
+      <div
+        style={{
+          maxWidth: 1060,
+          margin: "0 auto",
+          padding: isMobile ? "24px 16px 48px" : "44px 48px 80px",
+        }}
+      >
         {stageContent[stage]}
       </div>
     </div>

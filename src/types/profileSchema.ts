@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod";
 import {
   FDA_ALLERGENS,
   DIET_PATTERNS,
@@ -12,7 +12,7 @@ import {
   LIMITATION_DURATIONS,
   PROFILE_ROLES,
   ALARM_SOUND_OPTIONS,
-} from './profile'
+} from "./profile";
 
 export const profileSchema = z.object({
   id: z.string().uuid(),
@@ -40,10 +40,11 @@ export const profileSchema = z.object({
 
   // Timer alarm preferences
   alarmEnabled: z.boolean().default(true),
-  alarmSound: z.enum(ALARM_SOUND_OPTIONS).default('moderate'),
+  alarmSoundId: z.enum(ALARM_SOUND_OPTIONS).default("moderate"),
   alarmVolume: z.number().int().min(0).max(100).default(70),
   visualAlarmEnabled: z.boolean().default(false),
+  customAlarmId: z.string().optional(),
   customAlarmUploaded: z.boolean().default(false),
-})
+});
 
-export type ProfileSchema = z.infer<typeof profileSchema>
+export type ProfileSchema = z.infer<typeof profileSchema>;
