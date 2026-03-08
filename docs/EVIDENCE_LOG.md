@@ -33,6 +33,7 @@ Target: Minimum 3 credible sources; aim for 10–15 total entries.
 | Geist Font | Typography | https://vercel.com/font | Asset | SIL Open Font License | Variable weight |
 | recipe-scrapers | Python recipe parsing library | https://github.com/hhursev/recipe-scrapers | Code | MIT License | Vercel serverless |
 | requests | Python HTTP client | https://requests.readthedocs.io | Code | Apache 2.0 | For URL fetching |
+| USDA FoodData Central | Grocery category taxonomy for ingredient grouping | https://fdc.nal.usda.gov/ | Data | CC0 Public Domain | "What We Eat in America" food categories |
 
 ---
 
