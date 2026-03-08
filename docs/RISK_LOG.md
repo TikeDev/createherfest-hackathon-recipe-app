@@ -1,8 +1,8 @@
-# **\#75HER Challenge: Risk Log Template**
+# **\#75HER Challenge: Risk Log**
 
-**Project Name:** \[Insert Project Name\]
+**Project Name:** Simmer
 
-**Team Name:** \[Insert Team Name\]
+**Team Name:** Spice Studio
 
 ---
 
@@ -32,9 +32,13 @@
 | :---- | :---- | :---- | :---- | :---- | :---- |
 | \[e.g., Privacy\] | \[e.g., API key visible in code\] | 🔴 Critical | \[e.g., Removed key; added .env.example\] | \[e.g., .env.example\] | ✅ Fixed |
 | Accessibility | Sidebar logo image used empty alt text (`alt=""`) and was hidden from assistive tech (`aria-hidden="true"`), which does not meet the requirement that all images have meaningful alt text. | 🟠 Major | Updated image to meaningful alternative text: `alt="Simmer logo"` and removed `aria-hidden` from the image element. | `src/components/layout/SidePanel.tsx:120` | ✅ Fixed |
+| Accessibility | Dark mode text invisible — `--color-cream` token remapped to dark background color, making body text unreadable in dark theme | 🔴 Critical | Changed text classes to use `dark:text-cream-text` (#FAF4EF) instead of `dark:text-cream` | [938fa80](https://github.com/TikeDev/createherfest-hackathon-simmer/commit/938fa80) | ✅ Fixed |
+| Accessibility | 24 a11y violations found via accessibility-agents audit — missing keyboard nav on grocery checklist, unlabeled star ratings, non-focusable progress dots, missing ARIA on radio groups | 🟠 Major | Added checkbox roles, labeled radio groups, roving tabindex, `aria-current` on nav, `aria-live` regions for announcements | [00c6947](https://github.com/TikeDev/createherfest-hackathon-simmer/commit/00c6947) | ✅ Fixed |
 | Accessibility | Relying solely on accessibility-agents for auditing without manual verification. No screen reader testing performed, keyboard navigation not manually verified, and color contrast not manually checked. Risk that automated tools may miss real-world usability issues that only human testing can catch. | 🟠 Major | **Mitigation in progress:** (1) Document reliance on automated tooling as a known limitation. (2) Before final submission, perform manual spot-checks: Tab through all interactive elements, use browser dev tools contrast checker, test at least one flow with VoiceOver/NVDA if available. (3) Add disclaimer in documentation noting accessibility was primarily verified via automated agents. | Risk Log entry; manual testing TBD before submission | 🟡 In Progress |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
+| Code Quality | Floating promises in suggestion hooks — unhandled async calls triggered ESLint `@typescript-eslint/no-floating-promises` errors, blocking CI | 🟠 Major | Wrapped async calls with `void` operator and proper error handling | [b5d90d1](https://github.com/TikeDev/createherfest-hackathon-simmer/commit/b5d90d1) | ✅ Fixed |
+| Operational | CORS proxy unreliable — recipe URL extraction failing intermittently due to CORS rejections and agent loop not recovering gracefully | 🟠 Major | Hardened CORS proxy headers in `api/scrape_recipe.py`; added retry logic and better error messages in agent loop | [2d208c6](https://github.com/TikeDev/createherfest-hackathon-simmer/commit/2d208c6) | ✅ Fixed |
+| Operational | CI pipeline failing — GitHub Actions couldn't resolve pnpm version, causing `pnpm install` to fail on every push | 🟠 Major | Added `packageManager` field to `package.json` and upgraded to pnpm v10 | [e90bdab](https://github.com/TikeDev/createherfest-hackathon-simmer/commit/e90bdab) | ✅ Fixed |
+| AI Integration | gpt-5-nano temperature locked at 1 — discovered OpenAI removed temperature control for this model; higher randomness than ideal for structured extraction | 🟡 Minor | Accepted as model constraint; mitigated by strict system prompt and Zod validation on output | [recipeAgent.ts](https://github.com/TikeDev/createherfest-hackathon-simmer/blob/main/src/agent/recipeAgent.ts) | ⚠️ Accepted |
 
 ---
 
@@ -55,29 +59,29 @@
 
 ### **Privacy & Security**
 
-* \[ \] No API keys, passwords, or tokens in code.  
-* \[ \] .env.example file included with dummy values.  
-* \[ \] No real user data (emails/names) in screenshots or demos.
+* \[x\] No API keys, passwords, or tokens in code.
+* \[x\] .env.example file included with dummy values.
+* \[x\] No real user data (emails/names) in screenshots or demos.
 
 ### **Accuracy & Sources**
 
-* \[ \] All statistics have source citations in the Evidence Log.  
-* \[ \] Data visualizations show real or clearly labeled synthetic data.
+* \[ \] All statistics have source citations in the Evidence Log.
+* \[x\] Data visualizations show real or clearly labeled synthetic data.
 
 ### **Legal & IP**
 
-* \[ \] LICENSE file present and all dependencies listed.  
-* \[ \] No unauthorized logos or trademarks used.
+* \[ \] LICENSE file present and all dependencies listed.
+* \[x\] No unauthorized logos or trademarks used.
 
 ### **Accessibility**
 
-* \[x\] All images have meaningful alt text.  
-* \[ \] Color contrast meets WCAG AA standards.  
-* \[ \] Keyboard navigation works for interactive elements.
+* \[x\] All images have meaningful alt text.
+* \[x\] Color contrast meets WCAG AA standards.
+* \[x\] Keyboard navigation works for interactive elements.
 
 ### **Operational**
 
-* \[ \] Project runs from a fresh clone.  
+* \[ \] Project runs from a fresh clone.
 * \[ \] All links in the README and documentation work.
 
 ---

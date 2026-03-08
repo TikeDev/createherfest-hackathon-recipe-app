@@ -1,8 +1,8 @@
-# **\#75HER Challenge: Decision Log Template**
+# **\#75HER Challenge: Decision Log**
 
-**Project Name:** \[Insert Project Name\]
+**Project Name:** Simmer
 
-**Team Name:** \[Insert Team Name\]
+**Team Name:** Spice Studio
 
 ---
 
@@ -24,27 +24,24 @@
 | Category | Decision → Why | Tradeoff |
 | :---- | :---- | :---- |
 | **UX Design** | **"Simmer Coach" calm-voice branding** → Users with chronic or cognitive limitations are already managing stress; a warm, low-pressure coach tone reduces friction at the entry point and signals the app is built *for* them, not just *about* accessibility. | Softer brand voice may understate the AI complexity to judges; mitigated by the decision log and technical docs. |
-| **Tech Stack** | **\[Decision\]** → \[Reasoning\] | \[e.g., Higher cost, bundle size, or learning curve\] |
-| **Tech Stack** | **Vite** → Simple to set up boilerplate code and project scaffolding, efficient project file bundling for deployment | \[e.g., Higher cost, bundle size, or learning curve\] |
-| **Tech Stack** | **React** → Easy for coding agent to write and debug, modern UI components and styles | \[Tradeoff\] |
-| **Tech Stack** | **TailwindCSS** → Modern styling, easy for coding agent to implement and for us to read and update | \[Tradeoff\] |
-| **Tech Stack** | **Vercel for Deployment** → Good free tier, automatic updated deployment upon “git push” | \[Tradeoff\] |
-| **Tech Stack** | **recipe-scraper Python library** → \[Reasoning\] | \[Tradeoff\] |
-| **Tech Stack** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **Tech Stack** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **Architecture** | **\[Decision\]** → \[Reasoning\] | \[e.g., Limited scalability or higher latency\] |
-| **Architecture** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **Architecture** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **Architecture** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **AI Integration** | *OpenAI gpt-5-nano for recipe formatter agent* → Cheap/effective enough to enrich data and organize extracted recipe info | Smart recipe formatting would not work offline |
-| **AI Integration** | **\[Decision\]** → \[Reasoning\] | \[e.g., Rate limits or response speed\] |
-| **AI Integration** | **\[Decision\]** → \[Reasoning\] | \[e.g., Rate limits or response speed\] |
-| **Feature Scope** | **\[Decision\]** → \[Reasoning\] | \[e.g., Cut feature X to ensure stability of Y\] |
-| **Feature Scope** | **\[Decision\]** → \[Reasoning\] | \[e.g., Cut feature X to ensure stability of Y\] |
-| **Third-Party** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **Third-Party** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **Process** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
-| **Process** | **\[Decision\]** → \[Reasoning\] | \[Tradeoff\] |
+| **Tech Stack** | **IndexedDB via idb** → All data stays in browser for offline-first PWA; no backend database needed | No cross-device sync; data lost if user clears browser storage |
+| **Tech Stack** | **Vite 6** → Fast HMR, simple config, native ESM bundling for efficient project scaffolding | Less ecosystem than webpack; some plugins not yet compatible |
+| **Tech Stack** | **React 19** → Latest features, easy for AI coding agents to generate and debug | Newer version has fewer community examples |
+| **Tech Stack** | **TailwindCSS 3** → Utility-first CSS scales well with AI-generated components | Larger initial learning curve; verbose class names |
+| **Tech Stack** | **Vercel for Deployment** → Free tier, automatic deploys on git push, serverless Python support | Vendor lock-in; cold starts on serverless functions |
+| **Tech Stack** | **recipe-scrapers Python library** → Handles 400+ recipe sites with structured extraction | Requires serverless Python runtime; adds deployment complexity |
+| **Architecture** | **Agentic tool loop for extraction** → Model orchestrates 7 tools (preamble, ingredients, steps, conversions, validation) for reliable structured output | More API calls than single-shot; 30 iteration limit may timeout on complex recipes |
+| **Architecture** | **Two-stage suggestion: hard filter → soft rank** → Allergens/tools filtered client-side before LLM sees data; LLM only ranks safe recipes | LLM call adds latency; fallback to pure function if API fails |
+| **Architecture** | **5-stage CookingMode playbook** → Groceries → Pre-Prep → Prep → Cook → Serve mirrors real cooking workflow for cognitive clarity | More UI complexity; requires careful stage transitions |
+| **Architecture** | **Offline queue for failed extractions** → IndexedDB queue retries when network returns | Queue can grow if user stays offline; no notification of pending items |
+| **AI Integration** | **gpt-5-nano for extraction agent** → Cheapest model sufficient for structured function calling | Temperature locked at 1; mitigated with strict prompts and Zod validation |
+| **AI Integration** | **gpt-5-nano for suggestion agent** → Single structured-output call with temp=0.4 for consistent ranking | May hallucinate recipe IDs; fallback to pure function if validation fails |
+| **Feature Scope** | **Cut voice input for MVP** → Focus on core extraction + cooking mode; voice adds complexity | Users must type or paste; revisit post-hackathon |
+| **Feature Scope** | **Cut meal planning for MVP** → Single-recipe flow is simpler to demo and test | No weekly planning; users handle one recipe at a time |
+| **Third-Party** | **Lucide React for icons** → Tree-shakeable, accessible, consistent 24×24 grid | Smaller icon set than FontAwesome; some icons missing |
+| **Third-Party** | **shadcn/ui for components** → Copy-paste primitives with Radix accessibility baked in | Requires manual installation; no auto-updates |
+| **Process** | **Pre-commit hooks (Husky + lint-staged)** → Catch TypeScript and lint errors before they hit CI | Slows down commits; developers may bypass with --no-verify |
+| **Process** | **accessibility-agents on UI changes** → Automated a11y audit catches WCAG violations early | Adds tokens/cost per edit; some false positives require manual review |
 
 ---
 
@@ -67,11 +64,11 @@
 
 ## **✅ Submission Checklist**
 
-* \[ \] At least 5 decisions documented.  
-* \[ \] Every decision has a clear, specific tradeoff.  
-* \[ \] Decisions reflect choices made **DURING** the hackathon.  
-* \[ \] Organized by category (Tech Stack, Architecture, etc.).  
-* \[ \] File saved as DECISION\_LOG.md in the /docs/ folder.
+* \[x\] At least 5 decisions documented.
+* \[x\] Every decision has a clear, specific tradeoff.
+* \[x\] Decisions reflect choices made **DURING** the hackathon.
+* \[x\] Organized by category (Tech Stack, Architecture, etc.).
+* \[x\] File saved as DECISION\_LOG.md in the /docs/ folder.
 
 ---
 

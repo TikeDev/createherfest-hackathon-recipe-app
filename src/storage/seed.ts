@@ -1,6 +1,12 @@
 import { getAllRecipes, saveRecipe } from "./recipes";
 import type { RecipeJSON } from "@/types/recipe";
 
+/**
+ * Grocery categories adapted from USDA FoodData Central
+ * "What We Eat in America" food category system (public domain).
+ * Source: https://fdc.nal.usda.gov/
+ */
+
 const DEMO_RECIPES: RecipeJSON[] = [
   {
     id: "demo-bolivia-sopa-de-mani",
@@ -34,6 +40,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: "tablespoon",
         units: [{ original: "2 tablespoons", confidenceLevel: "high" }],
+        category: "Oils & Vinegars",
       },
       {
         id: "ing-sm-2",
@@ -42,6 +49,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: null,
         units: [{ original: "1 medium", grams: 150, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-sm-3",
@@ -50,6 +58,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 3,
         unit: "clove",
         units: [{ original: "3 cloves", confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-sm-4",
@@ -58,6 +67,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: "teaspoon",
         units: [{ original: "1 teaspoon", grams: 2, confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-sm-5",
@@ -66,6 +76,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: "cup",
         units: [{ original: "1 cup", grams: 145, confidenceLevel: "high" }],
+        category: "Pantry",
         substitutions: [
           {
             original: "roasted peanuts",
@@ -82,6 +93,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 4,
         unit: "cup",
         units: [{ original: "4 cups", mlEquivalent: 950, confidenceLevel: "high" }],
+        category: "Canned & Jarred",
       },
       {
         id: "ing-sm-7",
@@ -90,6 +102,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: null,
         units: [{ original: "2 medium", grams: 300, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-sm-8",
@@ -98,6 +111,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 450,
         unit: "g",
         units: [{ original: "450g", grams: 450, confidenceLevel: "high" }],
+        category: "Protein",
       },
       {
         id: "ing-sm-9",
@@ -106,6 +120,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to taste", confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-sm-10",
@@ -114,6 +129,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to garnish", confidenceLevel: "high" }],
+        category: "Produce",
       },
     ],
     steps: [
@@ -214,6 +230,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: "cup",
         units: [{ original: "1 cup", grams: 200, confidenceLevel: "high" }],
+        category: "Pantry",
       },
       {
         id: "ing-dt-2",
@@ -222,6 +239,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 3,
         unit: "cup",
         units: [{ original: "3 cups", mlEquivalent: 720, confidenceLevel: "high" }],
+        category: "Other",
       },
       {
         id: "ing-dt-3",
@@ -230,6 +248,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 0.5,
         unit: "teaspoon",
         units: [{ original: "½ teaspoon", grams: 1, confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-dt-4",
@@ -238,6 +257,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: "tablespoon",
         units: [{ original: "2 tablespoons", grams: 28, confidenceLevel: "high" }],
+        category: "Dairy",
         substitutions: [
           {
             original: "ghee",
@@ -254,6 +274,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: "teaspoon",
         units: [{ original: "1 teaspoon", grams: 2, confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-dt-6",
@@ -262,6 +283,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: null,
         units: [{ original: "1 medium", grams: 150, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-dt-7",
@@ -270,6 +292,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 3,
         unit: "clove",
         units: [{ original: "3 cloves", confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-dt-8",
@@ -285,6 +308,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
             explanation: "1-inch piece of ginger ≈ 8g",
           },
         ],
+        category: "Produce",
       },
       {
         id: "ing-dt-9",
@@ -293,6 +317,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: null,
         units: [{ original: "2 medium", grams: 250, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-dt-10",
@@ -301,6 +326,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: "teaspoon",
         units: [{ original: "1 teaspoon", grams: 2, confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-dt-11",
@@ -309,6 +335,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 0.5,
         unit: "teaspoon",
         units: [{ original: "½ teaspoon", confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-dt-12",
@@ -317,6 +344,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to taste", confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-dt-13",
@@ -325,6 +353,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to garnish", confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-dt-14",
@@ -333,6 +362,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: null,
         units: [{ original: "1 lemon", confidenceLevel: "high" }],
+        category: "Produce",
       },
     ],
     steps: [
@@ -463,6 +493,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: "tablespoon",
         units: [{ original: "2 tablespoons", mlEquivalent: 30, confidenceLevel: "high" }],
+        category: "Oils & Vinegars",
       },
       {
         id: "ing-cv-2",
@@ -471,6 +502,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: null,
         units: [{ original: "1 medium", grams: 150, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-cv-3",
@@ -479,6 +511,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 3,
         unit: "clove",
         units: [{ original: "3 cloves", confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-cv-4",
@@ -487,6 +520,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 4,
         unit: null,
         units: [{ original: "4 medium", grams: 600, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-cv-5",
@@ -495,6 +529,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 5,
         unit: "cup",
         units: [{ original: "5 cups", mlEquivalent: 1200, confidenceLevel: "high" }],
+        category: "Canned & Jarred",
       },
       {
         id: "ing-cv-6",
@@ -503,6 +538,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 200,
         unit: "g",
         units: [{ original: "200g", grams: 200, confidenceLevel: "high" }],
+        category: "Produce",
         substitutions: [
           {
             original: "kale",
@@ -519,6 +555,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 150,
         unit: "g",
         units: [{ original: "150g", grams: 150, confidenceLevel: "high" }],
+        category: "Protein",
       },
       {
         id: "ing-cv-8",
@@ -527,6 +564,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to taste", confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
     ],
     steps: [
@@ -631,6 +669,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 4,
         unit: "cup",
         units: [{ original: "4 cups", mlEquivalent: 950, confidenceLevel: "high" }],
+        category: "Canned & Jarred",
       },
       {
         id: "ing-ms-2",
@@ -639,6 +678,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 3,
         unit: "tablespoon",
         units: [{ original: "3 tablespoons", grams: 54, confidenceLevel: "high" }],
+        category: "Canned & Jarred",
       },
       {
         id: "ing-ms-3",
@@ -647,6 +687,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 150,
         unit: "g",
         units: [{ original: "150g", grams: 150, confidenceLevel: "high" }],
+        category: "Protein",
       },
       {
         id: "ing-ms-4",
@@ -662,6 +703,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
             explanation: "1 tbsp dried wakame ≈ 4g",
           },
         ],
+        category: "Pantry",
       },
       {
         id: "ing-ms-5",
@@ -670,6 +712,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: null,
         units: [{ original: "2 stalks", confidenceLevel: "high" }],
+        category: "Produce",
       },
     ],
     steps: [
@@ -763,6 +806,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: "tablespoon",
         units: [{ original: "2 tablespoons", mlEquivalent: 30, confidenceLevel: "high" }],
+        category: "Oils & Vinegars",
       },
       {
         id: "ing-sk-2",
@@ -771,6 +815,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: null,
         units: [{ original: "1 medium", grams: 150, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-sk-3",
@@ -779,6 +824,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: null,
         units: [{ original: "1 large", grams: 160, confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-sk-4",
@@ -787,6 +833,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 3,
         unit: "clove",
         units: [{ original: "3 cloves", confidenceLevel: "high" }],
+        category: "Produce",
       },
       {
         id: "ing-sk-5",
@@ -795,6 +842,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: "teaspoon",
         units: [{ original: "1 teaspoon", grams: 2, confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-sk-6",
@@ -803,6 +851,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 1,
         unit: "teaspoon",
         units: [{ original: "1 teaspoon", grams: 2, confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-sk-7",
@@ -811,6 +860,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 400,
         unit: "g",
         units: [{ original: "400g", grams: 400, confidenceLevel: "high" }],
+        category: "Canned & Jarred",
       },
       {
         id: "ing-sk-8",
@@ -819,6 +869,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 4,
         unit: null,
         units: [{ original: "4 large", grams: 200, confidenceLevel: "high" }],
+        category: "Protein",
       },
       {
         id: "ing-sk-9",
@@ -827,6 +878,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to taste", confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-sk-10",
@@ -835,6 +887,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to garnish", confidenceLevel: "high" }],
+        category: "Produce",
       },
     ],
     steps: [
@@ -948,6 +1001,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 400,
         unit: "g",
         units: [{ original: "400g", grams: 400, confidenceLevel: "high" }],
+        category: "Pantry",
       },
       {
         id: "ing-pc-2",
@@ -956,6 +1010,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 150,
         unit: "g",
         units: [{ original: "150g", grams: 150, confidenceLevel: "high" }],
+        category: "Protein",
       },
       {
         id: "ing-pc-3",
@@ -964,6 +1019,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 3,
         unit: null,
         units: [{ original: "3 large", grams: 150, confidenceLevel: "high" }],
+        category: "Protein",
       },
       {
         id: "ing-pc-4",
@@ -972,6 +1028,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 2,
         unit: null,
         units: [{ original: "2 yolks", confidenceLevel: "high" }],
+        category: "Protein",
       },
       {
         id: "ing-pc-5",
@@ -980,6 +1037,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: 80,
         unit: "g",
         units: [{ original: "80g", grams: 80, confidenceLevel: "high" }],
+        category: "Dairy",
       },
       {
         id: "ing-pc-6",
@@ -988,6 +1046,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to taste", confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
       {
         id: "ing-pc-7",
@@ -996,6 +1055,7 @@ const DEMO_RECIPES: RecipeJSON[] = [
         quantity: null,
         unit: null,
         units: [{ original: "to taste", confidenceLevel: "high" }],
+        category: "Spices & Seasonings",
       },
     ],
     steps: [
