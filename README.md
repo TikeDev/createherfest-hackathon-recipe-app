@@ -59,7 +59,7 @@ Add your `VITE_OPENAI_API_KEY` to `.env`, then open **http://localhost:5173** in
 - **Frontend:** React 19 + TypeScript — PWA (via `vite-plugin-pwa`), Vite 6, Tailwind CSS 3. Handles profile setup, session input, recommendations, recipe detail, and Playbook View.
 - **Backend:** Vercel serverless function (`api/fetch-recipe.ts`) — CORS proxy for recipe URL fetching. No persistent server.
 - **Database:** IndexedDB via `idb` — fully local storage for recipes, user profile, and offline extraction queue.
-- **AI Integration:** OpenAI `gpt-5-nano` (temp 0.3) with function calling — powers the recipe extraction agent (parse ingredients, extract steps, convert units, validate output).
+- **AI Integration:** OpenAI `gpt-5-nano` with function calling — powers the recipe extraction agent (parse ingredients, extract steps, convert units, validate output).
 
 ### 🤖 goose Integration (AI/ML Track)
 
