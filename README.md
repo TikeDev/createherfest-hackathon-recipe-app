@@ -1,10 +1,14 @@
+
+
+
+
 # Simmer 🍲
 
 **🔗 [Try the Live Demo!](https://createherfest-hackathon-recipe-app.vercel.app/)** (mobile friendly)
 
 **A React PWA that helps people with physical, cognitive, or temporary limitations find and follow accessible recipes.**
 
-<video src="simmer-demo-opt.mp4" width="400" alt="Simmer Demo Video" controls></video>
+<video src="https://github.com/user-attachments/assets/1daa2861-3b35-4eba-b391-14b9788fca35" width="400" alt="Simmer Demo Video" controls autoplay></video>
 
 ## 🧩 Problem Frame
 
