@@ -4,7 +4,7 @@
 
 **A React PWA that helps people with physical, cognitive, or temporary limitations find and follow accessible recipes.**
 
-<video src="simmer-demo-opt.mp4" width="400" alt="Drumink Demo GIF" controls autoplay></video>
+<video src="simmer-demo-opt.mp4" width="400" alt="Simmer Demo Video" controls></video>
 
 ## 🧩 Problem Frame
 
