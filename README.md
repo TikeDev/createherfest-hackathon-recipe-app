@@ -4,7 +4,7 @@
 
 **A React PWA that helps people with physical, cognitive, or temporary limitations find and follow accessible recipes.**
 
-<img src="simmer-demo-opt.gif" width="400" alt="Simmer Demo GIF" controls/>
+<img src="simmer-demo-opt.gif" width="400" alt="Simmer Demo GIF"/>
 
 ## 🧩 Problem Frame
 
